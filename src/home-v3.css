@@ -55,3 +55,87 @@
         display: none;
     }
 }
+.ps-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.ps-hero-gallery {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.ps-hero-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transform: scale(1.08) translateX(0);
+  transition: opacity 1.2s ease, transform 6s ease;
+  will-change: opacity, transform;
+}
+
+.ps-hero-photo.active {
+  opacity: 1;
+  transform: scale(1.16) translateX(-10px);
+}
+
+.ps-hero-shade,
+.ps-hero-rails,
+.ps-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.ps-hero-dots {
+  display: flex;
+  gap: 10px;
+  margin-top: 26px;
+  align-items: center;
+}
+
+.ps-hero-dots button {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.45);
+  background: transparent;
+  cursor: pointer;
+  transition: all .25s ease;
+  padding: 0;
+}
+
+.ps-hero-dots button.active {
+  background: #c7a067;
+  border-color: #c7a067;
+  transform: scale(1.15);
+}
+/* PRO STEEL — Strategic Markets */
+.ps-market-tabs {
+  max-height: 490px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c7a067 #172029;
+}
+
+.ps-market-tabs::-webkit-scrollbar {
+  width: 5px;
+}
+
+.ps-market-tabs::-webkit-scrollbar-track {
+  background: #172029;
+}
+
+.ps-market-tabs::-webkit-scrollbar-thumb {
+  background: #c7a067;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .ps-market-tabs {
+    max-height: 310px;
+  }
+}

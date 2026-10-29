@@ -15,23 +15,25 @@ export const categories = [
 ]
 
 export const products = [
-  {
-    id:'seamless-pipes',
-    category:'pipes',
-    en:'Seamless Steel Pipes',
-    ar:'أنابيب فولاذية بدون لحام',
-    tr:'Dikişsiz Çelik Borular',
+ 
+{
+  id:'seamless-pipes',
+  category:'pipes',
+  en:'Seamless Steel Pipes',
+  ar:'أنابيب فولاذية بدون لحام',
+  tr:'Dikişsiz Çelik Borular',
+  shape:'pipe',
+  photo:6,
+  image:'product16.png',
+  grade:'ST42 · ST44',
+  sizes:'Ø 60 × 5 · Ø 114 × 4 mm',
+  source:'historical',
+  model3d:{
     shape:'pipe',
-    photo:6,
-    grade:'ST42 · ST44',
-    sizes:'Ø 60 × 5 · Ø 114 × 4 mm',
-    source:'historical',
-    model3d:{
-      shape:'pipe',
-      finish:'raw',
-      dimensions:{diameter:114,wall:4}
-    }
-  },
+    finish:'raw',
+    dimensions:{diameter:114,wall:4}
+  }
+},
   {
     id:'galvanized-pipes',
     category:'pipes',
@@ -49,40 +51,45 @@ export const products = [
       dimensions:{diameter:89,wall:4}
     }
   },
-  {
-    id:'alloy-pipes',
-    category:'pipes',
-    en:'Alloy Steel Pipes',
-    ar:'أنابيب فولاذية سبائكية',
-    tr:'Alaşımlı Çelik Borular',
+
+{
+  id:'alloy-pipes',
+  category:'pipes',
+  en:'Alloy Steel Pipes',
+  ar:'أنابيب فولاذية سبائكية',
+  tr:'Alaşımlı Çelik Borular',
+  shape:'pipe',
+  photo:6,
+  image:'product18.png',
+  grade:'42CrMo4',
+  sizes:'Ø 133 × 30 mm',
+  source:'historical',
+  model3d:{
     shape:'pipe',
-    photo:6,
-    grade:'42CrMo4',
-    sizes:'Ø 133 × 30 mm',
-    source:'historical',
-    model3d:{
-      shape:'pipe',
-      finish:'alloy',
-      dimensions:{diameter:133,wall:30}
-    }
-  },
-  {
-    id:'black-coated-pipes',
-    category:'pipes',
-    en:'Black Coated Pipes',
-    ar:'أنابيب مطلية بالأسود',
-    tr:'Siyah Kaplamalı Borular',
+    finish:'alloy',
+    dimensions:{diameter:133,wall:30}
+  }
+},
+
+
+{
+  id:'black-coated-pipes',
+  category:'pipes',
+  en:'Black Coated Pipes',
+  ar:'أنابيب مطلية بالأسود',
+  tr:'Siyah Kaplamalı Borular',
+  shape:'pipe',
+  photo:6,
+  image:'product17.png',
+  grade:'Black coated',
+  sizes:'Ø 48 × 4 · Ø 76 × 4 mm',
+  source:'historical',
+  model3d:{
     shape:'pipe',
-    photo:6,
-    grade:'Black coated',
-    sizes:'Ø 48 × 4 · Ø 76 × 4 mm',
-    source:'historical',
-    model3d:{
-      shape:'pipe',
-      finish:'black',
-      dimensions:{diameter:76,wall:4}
-    }
-  },
+    finish:'black',
+    dimensions:{diameter:76,wall:4}
+  }
+},
   {
     id:'steel-profiles',
     category:'structural',
@@ -91,6 +98,7 @@ export const products = [
     tr:'Kare ve Dikdörtgen Kutu Profiller',
     shape:'box',
     photo:2,
+     image:'product19.png',
     grade:'Square / Rectangular',
     sizes:'20×20 · 30×20 · 40×40 mm',
     source:'historical',
@@ -108,6 +116,7 @@ export const products = [
     tr:'Eşit Kenar Çelik Köşebentler',
     shape:'angle',
     photo:3,
+     image:'product20.png',
     grade:'S235JR',
     sizes:'24 × 24 × 1.8 mm',
     source:'historical',
@@ -587,3 +596,178 @@ products.forEach(product => {
     product.photo = productImages[product.id]
   }
 })
+
+
+// China sourcing catalogue: images product1.png ... product15.png.
+// Product titles reflect reference screenshots; supplier origin and availability
+// must be verified for every actual order. Standards are illustrative only.
+export const chinaCategories = [
+ {id:'china-gi',en:'Galvanized Coil (GI)',ar:'لفائف وصفائح الحديد المجلفن',tr:'Galvanizli Rulo (GI)'},
+ {id:'china-gl',en:'Galvalume Coil (GL)',ar:'لفائف الألومنيوم والزنك',tr:'Galvalume Rulo (GL)'},
+ {id:'china-ppgi',en:'PPGI / PPGL',ar:'الحديد المطلي مسبقاً',tr:'PPGI / PPGL'},
+ {id:'china-corrugated',en:'Corrugated Steel Sheet',ar:'الصفائح الفولاذية المموجة',tr:'Oluklu Çelik Sac'},
+ {id:'china-pipes',en:'Pipe & Tubes',ar:'الأنابيب الفولاذية',tr:'Çelik Boru ve Tüpler'},
+ {id:'china-supply',en:'International Steel Supply Chains',ar:'سلاسل توريد الحديد الدولية',tr:'Uluslararası Çelik Tedarik Zinciri'},
+ {id:'china-wear',en:'Wear Resistant Steel Plate',ar:'صفائح الفولاذ المقاومة للاهتراء',tr:'Aşınmaya Dayanıklı Çelik Levha'}
+]
+categories.push(...chinaCategories)
+
+const chinaEntries = [
+ {index:1,id:'galvanized-sheet',category:'china-gi',en:'Galvanized Sheet',ar:'صفائح فولاذية مجلفنة',tr:'Galvanizli Sac',shape:'sheet',finish:'galvanized',standard:'ASTM A653/A653M (example)',technicalType:'galvanized'},
+ {index:2,id:'galvanized-coils',category:'china-gi',en:'Galvanized Steel Coil',ar:'لفائف فولاذية مجلفنة',tr:'Galvanizli Çelik Rulo',shape:'coil',finish:'galvanized',standard:'ASTM A653/A653M (example)',technicalType:'galvanized'},
+ {index:3,id:'galvanized-sheet-coil',category:'china-gi',en:'Galvanized Steel Sheet in Coil',ar:'صفائح فولاذية مجلفنة على شكل لفائف',tr:'Rulo Halinde Galvanizli Çelik Sac',shape:'coil',finish:'galvanized',standard:'ASTM A653/A653M (example)',technicalType:'galvanized'},
+ {index:4,id:'aluminum-zinc-plate',category:'china-gl',en:'Aluminum Zinc Plate',ar:'صفائح فولاذية مطلية بالألومنيوم والزنك',tr:'Alüminyum Çinko Kaplı Sac',shape:'sheet',finish:'galvanized',standard:'ASTM A792/A792M (example)',technicalType:'galvalume'},
+ {index:5,id:'ppgi-manufacturer',category:'china-ppgi',en:'PPGI Manufacturer',ar:'منتجات PPGI المطلية مسبقاً',tr:'PPGI Üretim Ürünleri',shape:'coil',finish:'blue',standard:'ASTM A755/A755M (example)',technicalType:'ppgi'},
+ {index:6,id:'ppgi-coils',category:'china-ppgi',en:'PPGI Coils Prepainted',ar:'لفائف فولاذية مطلية مسبقاً PPGI',tr:'Ön Boyalı PPGI Rulolar',shape:'coil',finish:'red',standard:'ASTM A755/A755M (example)',technicalType:'ppgi'},
+ {index:7,id:'ppgi-galvanized-coils',category:'china-ppgi',en:'PPGI Coil Galvanized Steel',ar:'لفائف فولاذية مجلفنة ومطلية PPGI',tr:'PPGI Boyalı Galvanizli Rulo',shape:'coil',finish:'blue',standard:'ASTM A755/A755M (example)',technicalType:'ppgi'},
+ {index:8,id:'ppgi-corrugated',category:'china-ppgi',en:'PPGI Corrugated Roofing Sheet',ar:'صفائح أسقف مموجة PPGI',tr:'PPGI Oluklu Çatı Sacı',shape:'corrugated',finish:'red',standard:'ASTM A755/A755M (example)',technicalType:'roof'},
+ {index:9,id:'ppgi-roofing',category:'china-corrugated',en:'PPGI Roofing Sheet',ar:'صفائح أسقف مطلية PPGI',tr:'PPGI Boyalı Çatı Sacı',shape:'corrugated',finish:'blue',standard:'ASTM A755/A755M (example)',technicalType:'roof'},
+ {index:10,id:'galvanized-corrugated',category:'china-corrugated',en:'Galvanized Corrugated Roofing Sheet',ar:'صفائح أسقف مموجة مجلفنة',tr:'Galvanizli Oluklu Çatı Sacı',shape:'corrugated',finish:'galvanized',standard:'ASTM A653/A653M (substrate example)',technicalType:'roof'},
+ {index:11,id:'oil-gas-pipelines',category:'china-pipes',en:'Oil and Gas Pipelines',ar:'أنابيب النفط والغاز',tr:'Petrol ve Gaz Boruları',shape:'pipe',finish:'black',standard:'ASTM A106 / A213 / A335 / A333 / EN 10216-2 (application-dependent)',technicalType:'pipeline'},
+ {index:12,id:'astm-a519-4140-pipe',category:'china-pipes',en:'ASTM A519 4140 Seamless Steel Pipe',ar:'أنبوب فولاذ سبائكي بدون لحام ASTM A519 4140',tr:'ASTM A519 4140 Dikişsiz Çelik Boru',shape:'pipe',finish:'alloy',standard:'ASTM A519/A519M; 4140 grade subject to mill certificate',technicalType:'a519'},
+ {index:13,id:'wear-resistant-plate',category:'china-wear',en:'Wear Resistant Steel Plate',ar:'صفائح فولاذية مقاومة للاهتراء',tr:'Aşınmaya Dayanıklı Çelik Levha',shape:'sheet',finish:'hot-rolled',standard:'Grade-specific mill specification',technicalType:'wear'},
+ {index:14,id:'wear-plate-buckets',category:'china-wear',en:'Premium Quality NM400 AR400 Q460 S460MC Wear Resistant Steel Plate HB400 HB450 QT for Loader Buckets',ar:'صفائح فولاذية لمعدات التحميل بمواصفات مقاومة للاهتراء',tr:'Yükleyici Kovaları İçin Aşınmaya Dayanıklı Çelik Levha',shape:'sheet',finish:'hot-rolled',standard:'NM400 / AR400 / other grades are not necessarily equivalent',technicalType:'wear'},
+ {index:15,id:'wear-resistant-industrial',category:'china-wear',en:'Premium Wear-Resistant Steel Plates for Industrial Durability',ar:'صفائح فولاذية صناعية عالية المقاومة للاهتراء',tr:'Endüstriyel Aşınmaya Dayanıklı Çelik Levhalar',shape:'sheet',finish:'hot-rolled',standard:'Grade-specific mill specification',technicalType:'wear'}
+]
+
+const technicalSets = {
+ galvanized: [['Product form','Coil / cut sheet'],['Zinc coating','Supplier-dependent; specify coating designation'],['Dimensions','Thickness, width, length and coil mass to confirm'],['Technical reference','ASTM A653/A653M; verify applicable designation']],
+ galvalume: [['Product form','Coil / cut sheet'],['Coating','Aluminum–zinc alloy coating; type and mass to confirm'],['Dimensions','Thickness, width and length to confirm'],['Technical reference','ASTM A792/A792M for qualifying material']],
+ ppgi: [['Substrate','Galvanized / aluminum-zinc coated steel, as ordered'],['Paint system','Primer / topcoat; resin and coating thickness to confirm'],['Dimensions','Thickness, width, inner diameter and coil weight to confirm'],['Technical reference','ASTM A755/A755M for applicable building sheets']],
+ roof: [['Profile','Corrugated / trapezoidal profile (confirm profile drawing)'],['Finish','Prepainted or galvanized according to product'],['Dimensions','Base thickness, cover width, total width, length to confirm'],['Technical reference','Applicable substrate / prepainted sheet standards']],
+ pipeline: [['Application','Oil, gas, boiler or heat-exchanger duties depend on specification'],['Outside diameter','To be confirmed by project and standard'],['Wall thickness','To be confirmed by schedule / selected grade'],['Technical reference','ASTM A106 / A213 / A335 / A333 / EN 10216-2; not interchangeable']],
+ a519: [['Manufacturing','Seamless mechanical tubing'],['Steel grade','4140 alloy steel, when certified by mill'],['Dimensions','Outside diameter, wall thickness, tube length on request'],['Technical reference','ASTM A519/A519M (mechanical tubing, not automatically pipeline certified)']],
+ wear: [['Product form','Wear-resistant plate'],['Hardness','HBW hardness range dependent on specific grade / test certificate'],['Dimensions','Thickness, width and length on request'],['Technical reference','NM400 / AR400 etc. subject to distinct mill standards and certification']]
+}
+
+// The first seven pre-existing historical records retain their provenance;
+// the fifteen reference titles are mapped by ID rather than duplicated.
+for (const entry of chinaEntries) {
+ const existing = products.find(p => p.id === entry.id)
+ const p = existing || {
+   id: entry.id, source: 'sourcing', grade: 'Supplier confirmation required', sizes: 'On request',
+   shape: entry.shape, model3d: {shape:entry.shape,finish:entry.finish,dimensions:{
+     ...(entry.shape==='pipe'?{diameter:114,wall:6}:{}),
+     ...(entry.shape==='sheet'||entry.shape==='coil'||entry.shape==='corrugated'?{width:1200}:{}),
+   }}
+ }
+ p.en=entry.en;p.ar=entry.ar;p.tr=entry.tr
+ p.chinaCategory=entry.category
+ if(entry.id==='oil-gas-pipelines') p.chinaExtraCategories=['china-supply']
+ p.image=`product${entry.index}.png`
+ p.originMarket='China sourcing reference' // market, not certified country of origin
+ p.countryOfOrigin=null // actual origin only with supplier / mill paperwork
+ p.standards=[entry.standard]
+ p.technicalSpecs=technicalSets[entry.technicalType].map(([label,value])=>({label,value}))
+ p.specStatus='Illustrative reference; verify grade, dimensions and origin before quotation'
+ p.referenceImageIndex=entry.index
+ if(!existing) products.push(p)
+}
+
+// Consolidate commercially synonymous titles, while keeping distinct product forms.
+// product1..product15 are all retained as photographs on their canonical pages.
+const duplicates = {
+  'galvanized-sheet-coil': 'galvanized-coils',
+  'ppgi-manufacturer': 'ppgi-coils',
+  'ppgi-galvanized-coils': 'ppgi-coils',
+  'ppgi-roofing': 'ppgi-corrugated',
+  'wear-plate-buckets': 'wear-resistant-plate',
+  'wear-resistant-industrial': 'wear-resistant-plate'
+}
+export const productAliases = {...duplicates}
+const extraGallery = {}
+for(const [oldId,keepId] of Object.entries(duplicates)) {
+  const old=products.find(p=>p.id===oldId)
+  if(old?.image) (extraGallery[keepId] ||= []).push(old.image)
+}
+for(let i=products.length-1;i>=0;i--){
+  if(duplicates[products[i].id]) products.splice(i,1)
+}
+// Preserve all supplied images, even where names were marketing duplicates.
+for(const p of products){
+ p.gallery=[...new Set([p.image||`steel-${p.photo}.png`,...(extraGallery[p.id]||[])])]
+ if(p.id==='ppgi-coils') p.chinaExtraCategories=[...(p.chinaExtraCategories||[]),'china-ppgi']
+ if(p.id==='ppgi-corrugated') p.chinaExtraCategories=[...(p.chinaExtraCategories||[]),'china-ppgi','china-corrugated']
+}
+
+// Preserve distinct legacy items. Their old thumbnail numbers and example
+// dimensions remain available, but do not imply a stocked specification.
+for (const p of products) {
+ if (!p.image) p.image=`steel-${p.photo}.png`
+ if (p.countryOfOrigin===undefined) p.countryOfOrigin=null
+ if (!p.technicalSpecs) {
+   const d=p.model3d?.dimensions||{}
+   p.technicalSpecs=[
+     {label:'Product family',value: categories.find(c=>c.id===p.category)?.en||p.category},
+     {label:'Grade examples',value:p.grade||'On request'},
+     {label:'Illustrative sizes',value:p.sizes||'Supplier confirmation required'},
+     {label:'Illustrative 3D section (mm)',value:Object.entries(d).map(([k,v])=>`${k}: ${v}`).join(' / ')||'Representative geometry only'},
+     {label:'Applicable standard',value:'Confirm grade and governing standard with manufacturer'}
+   ]
+ }
+ if (!p.specStatus) p.specStatus='Historical example or product-family reference; availability, dimensions and origin require confirmation'
+}
+
+// Supplement legacy records with reference-standard families (not certifications).
+const standardFamilies={
+ 'seamless-pipes':['ASTM A106/A106M (if specified for pressure service)','EN 10216 series (grade-dependent)'],
+ 'galvanized-pipes':['EN 10240 (if applicable to protective coatings)','Base-pipe standard to be agreed'],
+ 'alloy-pipes':['ASTM A519/A519M (for qualifying mechanical tube)','EN 10297-1 (where applicable)'],
+ 'steel-profiles':['EN 10219 (cold formed) or EN 10210 (hot finished), as selected'],
+ 'steel-angles':['EN 10056 dimensional series; EN 10025 grade family where applicable'],
+ 'round-bars':['EN 10060 dimension family; grade standard to be agreed'],
+ 'rebar':['EN 10080 product family; local grade and certification required'],
+ 'wire-rod':['EN 10017 / EN 10016 dimension and technical families, subject to product grade'],
+ 'structural-beams':['EN 10365 dimensions; steel grade to applicable specification']
+}
+for(const p of products){
+ if(!p.standards?.length&&standardFamilies[p.id])p.standards=standardFamilies[p.id]
+}
+
+
+// Confirmed business-provided origin and target-market assignments (29 Oct 2026).
+// These are commercial catalogue declarations, not mill or shipment certificates.
+// Keep dimensional / grading references and 3D models unchanged.
+const declaredProductMarkets = {
+  'seamless-pipes': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq'] },
+  'galvanized-pipes': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq'] },
+  'alloy-pipes': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq'] },
+  'black-coated-pipes': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq'] },
+  'steel-profiles': { origin: 'Türkiye', markets: ['Türkiye', 'Syria'] },
+  'steel-angles': { origin: 'Türkiye', markets: ['Türkiye', 'Syria'] },
+  'round-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'hot-flat-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'hot-square-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'hot-hex-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'hot-tee-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'hot-custom-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'cold-flat-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'cold-square-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'cold-round-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'cold-hex-bars': { origin: 'Türkiye', markets: ['Syria', 'Egypt'] },
+  'oil-gas-pipelines': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'ppgi-coils': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'ppgl-coils': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'galvanized-coils': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'aluzinc-coils': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'aluminum-zinc-plate': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'ppgi-corrugated': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'galvanized-corrugated': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'wire-rod': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'cold-rolled-sheets': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'hot-rolled-coils': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'heavy-plates': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'structural-beams': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'astm-a519-4140-pipe': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'galvanized-sheet': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+  'wear-resistant-plate': { origin: 'China', markets: ['Türkiye', 'Syria', 'Iraq', 'Saudi Arabia', 'United Arab Emirates', 'Egypt'] },
+}
+
+for (const p of products) {
+  const declared = declaredProductMarkets[p.id]
+  if (!declared) continue
+  p.countryOfOrigin = declared.origin
+  p.targetMarkets = [...declared.markets]
+  // Backward compatibility with existing product detail field.
+  p.originMarket = declared.markets.join(', ')
+}

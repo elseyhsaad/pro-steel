@@ -1,142 +1,1234 @@
 <script setup>
+
+
+
+
+
+
+
 import { computed, ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
+
+
+
+
+
+
+
 import { useRoute, RouterLink } from 'vue-router'
+
+
+
+
+
+
+
 import { ArrowUpRight, ArrowDown, ArrowRight, FileText, Factory, Package, ShieldCheck, Ship, ChevronDown, Globe2, CalendarDays, Layers3, CheckCircle2 } from 'lucide-vue-next'
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const route = useRoute()
+
+
+
+
+
+
+
 const lang = computed(() => route.meta.lang || 'en')
+
+
+
+
+
+
+
 const rtl = computed(() => lang.value === 'ar')
-const prefix = computed(() => `/${lang.value}/`)
-const photo = n => `${import.meta.env.BASE_URL}images/steel-${n}.png`
+
+
+
+
+
+
+
+const prefix = computed(() => '/' + lang.value + '/')
+
+
+
+
+
+
+
+const photo = n => import.meta.env.BASE_URL + 'images/steel-' + n + '.png'
+
+
+
+
+
+
+
 const region = ref('china')
+
+
+
+
+
+
+
 const year = ref('all')
+
+
+
+
+
+
+
 const expanded = ref(null)
+
+
+
+
+
+
+
 const selectedFamily = ref(0)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const invoices = [
-  {id:'CN01',g:'china',date:'2023-10-11',seller:'MULTI GROUP LTD',ref:'MT230925',weight:54.065,f:['seamless','bars'],note:'ST44 tubes; ST52 round bars; sample 0.057 t',sizes:'Tubes 12×114, 11×83, 12×122, 14×232 mm; bars Ø232 and Ø120 mm',route:'Turkish arrival ports differ between records; departure port unconfirmed'},
-  {id:'CN02',g:'china',date:'2023-11-30',seller:'MULTI GROUP LTD',ref:'MT231110',weight:108.996,f:['seamless','galvanized','alloy','bars'],note:'ST44 / 42CrMo4 tubes; galvanized pipes; 42CrMo4 bars',sizes:'Tubes 5×30 to 22×73 mm; galvanized 4×89 to 5×169 mm; bar Ø85 mm',route:'China seller address → İskenderun, Türkiye'},
-  {id:'CN03',g:'china',date:'2024-03-25',seller:'MULTI GROUP LTD',ref:'MT240228',weight:129.298,f:['seamless','alloy','bars'],note:'ST44 and 42CrMo4 tubes; 42CrMo4 bars',sizes:'Tubes 5×30 to 38×152 mm; bar Ø85 mm',route:'China seller address → İskenderun, Türkiye'},
-  {id:'CN04',g:'china',date:'2025-02-11',seller:'SHANDONG POWERSTEEL CO., LTD',ref:'PS16241030',weight:206.698,f:['seamless','galvanized','alloy','bars'],note:'ST42 tubes; 42CrMo4 alloy tubes/bars; galvanized pipes',sizes:'ST42 22×5 to 100×10 mm; galvanized 4×89 and 4×114 mm',route:'Tianjin, China → İskenderun, Türkiye · 93 bundles'},
-  {id:'CN05',g:'china',date:'2025-04-02',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS31250219',weight:165.600,f:['galvanized'],note:'Galvanized seamless steel pipes',sizes:'3.5×60.3, 3.5×76, 4×89, 4×114, 4×140 mm',route:'Tianjin → İskenderun · 108 bundles · 6 m lengths'},
-  {id:'CN06',g:'china',date:'2025-05-29',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS43250417',weight:362.488,f:['galvanized','seamless'],note:'254.460 t galvanized; 108.028 t seamless carbon steel pipes',sizes:'Galvanized 3.5×60 to 4.5×140 mm; carbon 5×22 to 8×40 mm',route:'Tianjin → İskenderun · 196 bundles'},
-  {id:'CN07',g:'china',date:'2025-06-01',seller:'SHANDONG ZHONGSHENG MATERIALS',ref:'SDZS20250528C',weight:107.057,f:['galvanized','black'],note:'79.363 t hot-dip galvanized; 27.694 t black-coated seamless tubes',sizes:'Galvanized 3.8×76 to 4.6×141 mm; black 4×48 to 5×65 mm',route:'China → İskenderun · exact June date unconfirmed',dateLabel:'06/2025'},
-  {id:'CN08',g:'china',date:'2025-09-17',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS56250730',weight:462.966,f:['seamless','galvanized','bars'],note:'ST44 pipes, galvanized GI pipes, ST37/ST44/42CrMo4 round bars',sizes:'Tubes 5×22 to 50×200 mm; GI 3.5×76 to 4.5×140 mm',route:'İskenderun, Türkiye; departure location not established'},
-  {id:'CN09',g:'china',date:'2025-12-12',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS64251125',weight:211.680,f:['galvanized'],note:'ST44 galvanized seamless pipes',sizes:'4×89, 4×114, 5×140, 5×168, 5.5×89, 5.5×114 mm',route:'İskenderun · 6 m lengths; departure location not confirmed'},
-  {id:'CN10',g:'china',date:'2025-12-28',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS67251228',weight:279.264,f:['seamless'],note:'ST44 seamless steel pipes · 44 line items',sizes:'Representative dimensions 6×38 to 42×219 mm; 6–12 m lengths',route:'İskenderun; departure location not confirmed'},
-  {id:'TR01',g:'turkiye',date:'2024-04-18',seller:'Anadolu Boru',weight:26.060,f:['profiles'],note:'Q16 / Q32 tubes and structural profiles',sizes:'20×20, 40×20, 30×10, 40×40 mm',route:'Türkiye → Syria · EXW Kayseri'},
-  {id:'TR02',g:'turkiye',date:'2024-07-11',seller:'Anadolu Boru',weight:25.820,f:['profiles'],note:'Q13 / Q16 tubes and profiles',sizes:'Includes 20×20 mm profiles',route:'Türkiye → Syria'},
-  {id:'TR03',g:'turkiye',date:'2024-08-05',seller:'Anadolu Boru',weight:null,f:['profiles'],note:'Tubes and profiles · 8 line items',sizes:'Various dimensions, weight not verified',route:'Türkiye → Syria · excluded from weight subtotal'},
-  {id:'TR04',g:'turkiye',date:'2024-08-06',seller:'Anadolu Boru',weight:25.980,f:['profiles'],note:'Rectangular and square profiles',sizes:'20×20, 30×20, 40×20 mm',route:'Türkiye → Syria'},
-  {id:'TR05',g:'turkiye',date:'2024-11-05',seller:'Anadolu Boru',weight:26.060,f:['profiles'],note:'Q13/Q16/Q25/Q32 tubes and profiles',sizes:'20×20 and 20×10 mm sections',route:'Türkiye → Syria'},
-  {id:'TR06',g:'turkiye',date:'2024-11-14',seller:'Çağ Çelik',weight:25.680,f:['angles'],note:'S235JR hot-rolled equal angles',sizes:'24×24×1.8 mm · 6 m lengths · 13 bundles',route:'Türkiye → Syria · FCA Karabük'},
-  {id:'TR07',g:'turkiye',date:'2025-01-24',seller:'Anadolu Boru',weight:25.120,f:['profiles'],note:'Q13/Q16 tubes and profiles',sizes:'Includes 30×10 mm sections',route:'Türkiye → Syria'},
-  {id:'TR08',g:'turkiye',date:'2025-10-03',seller:'Anadolu Boru',weight:24.520,f:['profiles'],note:'Q10/Q16 tubes and sections',sizes:'Includes 15×15 mm sections; thickness varies',route:'Türkiye → Syria'},
-  {id:'TR09',g:'turkiye',date:'2026-02-20',seller:'Anadolu Boru',weight:24.840,f:['profiles'],note:'Q13/Q16 tubes and sections',sizes:'20×10 and 30×10 mm sections',route:'Türkiye → Syria'},
-  {id:'TR10',g:'turkiye',date:'2026-04-28',seller:'Anadolu Boru',weight:24.600,f:['profiles'],note:'Q13/Q16/Q19/Q22 tubes',sizes:'6 line items; detailed per-item weights need confirmation',route:'Türkiye → Syria'},
-  {id:'TR11',g:'turkiye',date:'2026-06-18',seller:'Anadolu Boru',weight:25.020,f:['profiles'],note:'Q10/Q13 tubes and sections',sizes:'20×20 and 30×30 mm sections',route:'Türkiye → Syria'},
-  {id:'TR12',g:'turkiye',date:'2026-07-14',seller:'Çelikoğlu',weight:25.820,f:['bars'],note:'S235JR cold-drawn round steel bars',sizes:'Diameter unclear in supplied document · 13 packages',route:'Türkiye → Syria'},
-  {id:'TR13',g:'turkiye',date:'2026-07-17',seller:'Çelikoğlu',weight:26.540,f:['bars'],note:'S235JR and SAE 1045 steel bars',sizes:'30×50, 45×45 mm and Ø28 mm cited; other sizes unclear',route:'Türkiye → Syria'},
-  {id:'TR14',g:'turkiye',date:'2026-08-26',seller:'Çelikoğlu',weight:26.780,f:['bars'],note:'S235JR hot-drawn steel bars',sizes:'13 packages; exact dimensions unavailable',route:'Türkiye → Syria'}
+
+
+
+
+
+
+
+  {id:'CN01',g:'china',date:'2023-10-11',seller:'MULTI GROUP LTD',ref:'MT230925',weight:54.065,f:['seamless','bars'],note:'ST44 tubes; ST52 round bars; sample 0.057 t',sizes:'Tubes 12×114, 11×83, 12×122, 14×232 mm; bars Ø232 and Ø120 mm',route:'Turkish arrival ports differ between records; departure port unconfirmed'},
+
+
+
+
+
+
+
+  {id:'CN02',g:'china',date:'2023-11-30',seller:'MULTI GROUP LTD',ref:'MT231110',weight:108.996,f:['seamless','galvanized','alloy','bars'],note:'ST44 / 42CrMo4 tubes; galvanized pipes; 42CrMo4 bars',sizes:'Tubes 5×30 to 22×73 mm; galvanized 4×89 to 5×169 mm; bar Ø85 mm',route:'China seller address → İskenderun, Türkiye'},
+
+
+
+
+
+
+
+  {id:'CN03',g:'china',date:'2024-03-25',seller:'MULTI GROUP LTD',ref:'MT240228',weight:129.298,f:['seamless','alloy','bars'],note:'ST44 and 42CrMo4 tubes; 42CrMo4 bars',sizes:'Tubes 5×30 to 38×152 mm; bar Ø85 mm',route:'China seller address → İskenderun, Türkiye'},
+
+
+
+
+
+
+
+  {id:'CN04',g:'china',date:'2025-02-11',seller:'SHANDONG POWERSTEEL CO., LTD',ref:'PS16241030',weight:206.698,f:['seamless','galvanized','alloy','bars'],note:'ST42 tubes; 42CrMo4 alloy tubes/bars; galvanized pipes',sizes:'ST42 22×5 to 100×10 mm; galvanized 4×89 and 4×114 mm',route:'Tianjin, China → İskenderun, Türkiye · 93 bundles'},
+
+
+
+
+
+
+
+  {id:'CN05',g:'china',date:'2025-04-02',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS31250219',weight:165.600,f:['galvanized'],note:'Galvanized seamless steel pipes',sizes:'3.5×60.3, 3.5×76, 4×89, 4×114, 4×140 mm',route:'Tianjin → İskenderun · 108 bundles · 6 m lengths'},
+
+
+
+
+
+
+
+  {id:'CN06',g:'china',date:'2025-05-29',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS43250417',weight:362.488,f:['galvanized','seamless'],note:'254.460 t galvanized; 108.028 t seamless carbon steel pipes',sizes:'Galvanized 3.5×60 to 4.5×140 mm; carbon 5×22 to 8×40 mm',route:'Tianjin → İskenderun · 196 bundles'},
+
+
+
+
+
+
+
+  {id:'CN07',g:'china',date:'2025-06-01',seller:'SHANDONG ZHONGSHENG MATERIALS',ref:'SDZS20250528C',weight:107.057,f:['galvanized','black'],note:'79.363 t hot-dip galvanized; 27.694 t black-coated seamless tubes',sizes:'Galvanized 3.8×76 to 4.6×141 mm; black 4×48 to 5×65 mm',route:'China → İskenderun · exact June date unconfirmed',dateLabel:'06/2025'},
+
+
+
+
+
+
+
+  {id:'CN08',g:'china',date:'2025-09-17',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS56250730',weight:462.966,f:['seamless','galvanized','bars'],note:'ST44 pipes, galvanized GI pipes, ST37/ST44/42CrMo4 round bars',sizes:'Tubes 5×22 to 50×200 mm; GI 3.5×76 to 4.5×140 mm',route:'İskenderun, Türkiye; departure location not established'},
+
+
+
+
+
+
+
+  {id:'CN09',g:'china',date:'2025-12-12',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS64251125',weight:211.680,f:['galvanized'],note:'ST44 galvanized seamless pipes',sizes:'4×89, 4×114, 5×140, 5×168, 5.5×89, 5.5×114 mm',route:'İskenderun · 6 m lengths; departure location not confirmed'},
+
+
+
+
+
+
+
+  {id:'CN10',g:'china',date:'2025-12-28',seller:'POWERSTEEL HOLDINGS LIMITED',ref:'PS67251228',weight:279.264,f:['seamless'],note:'ST44 seamless steel pipes · 44 line items',sizes:'Representative dimensions 6×38 to 42×219 mm; 6–12 m lengths',route:'İskenderun; departure location not confirmed'},
+
+
+
+
+
+
+
+  {id:'TR01',g:'turkiye',date:'2024-04-18',seller:'Anadolu Boru',weight:26.060,f:['profiles'],note:'Q16 / Q32 tubes and structural profiles',sizes:'20×20, 40×20, 30×10, 40×40 mm',route:'Türkiye → Syria · EXW Kayseri'},
+
+
+
+
+
+
+
+  {id:'TR02',g:'turkiye',date:'2024-07-11',seller:'Anadolu Boru',weight:25.820,f:['profiles'],note:'Q13 / Q16 tubes and profiles',sizes:'Includes 20×20 mm profiles',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR03',g:'turkiye',date:'2024-08-05',seller:'Anadolu Boru',weight:null,f:['profiles'],note:'Tubes and profiles · 8 line items',sizes:'Various dimensions, weight not verified',route:'Türkiye → Syria · excluded from weight subtotal'},
+
+
+
+
+
+
+
+  {id:'TR04',g:'turkiye',date:'2024-08-06',seller:'Anadolu Boru',weight:25.980,f:['profiles'],note:'Rectangular and square profiles',sizes:'20×20, 30×20, 40×20 mm',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR05',g:'turkiye',date:'2024-11-05',seller:'Anadolu Boru',weight:26.060,f:['profiles'],note:'Q13/Q16/Q25/Q32 tubes and profiles',sizes:'20×20 and 20×10 mm sections',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR06',g:'turkiye',date:'2024-11-14',seller:'Çağ Çelik',weight:25.680,f:['angles'],note:'S235JR hot-rolled equal angles',sizes:'24×24×1.8 mm · 6 m lengths · 13 bundles',route:'Türkiye → Syria · FCA Karabük'},
+
+
+
+
+
+
+
+  {id:'TR07',g:'turkiye',date:'2025-01-24',seller:'Anadolu Boru',weight:25.120,f:['profiles'],note:'Q13/Q16 tubes and profiles',sizes:'Includes 30×10 mm sections',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR08',g:'turkiye',date:'2025-10-03',seller:'Anadolu Boru',weight:24.520,f:['profiles'],note:'Q10/Q16 tubes and sections',sizes:'Includes 15×15 mm sections; thickness varies',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR09',g:'turkiye',date:'2026-02-20',seller:'Anadolu Boru',weight:24.840,f:['profiles'],note:'Q13/Q16 tubes and sections',sizes:'20×10 and 30×10 mm sections',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR10',g:'turkiye',date:'2026-04-28',seller:'Anadolu Boru',weight:24.600,f:['profiles'],note:'Q13/Q16/Q19/Q22 tubes',sizes:'6 line items; detailed per-item weights need confirmation',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR11',g:'turkiye',date:'2026-06-18',seller:'Anadolu Boru',weight:25.020,f:['profiles'],note:'Q10/Q13 tubes and sections',sizes:'20×20 and 30×30 mm sections',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR12',g:'turkiye',date:'2026-07-14',seller:'Çelikoğlu',weight:25.820,f:['bars'],note:'S235JR cold-drawn round steel bars',sizes:'Diameter unclear in supplied document · 13 packages',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR13',g:'turkiye',date:'2026-07-17',seller:'Çelikoğlu',weight:26.540,f:['bars'],note:'S235JR and SAE 1045 steel bars',sizes:'30×50, 45×45 mm and Ø28 mm cited; other sizes unclear',route:'Türkiye → Syria'},
+
+
+
+
+
+
+
+  {id:'TR14',g:'turkiye',date:'2026-08-26',seller:'Çelikoğlu',weight:26.780,f:['bars'],note:'S235JR hot-drawn steel bars',sizes:'13 packages; exact dimensions unavailable',route:'Türkiye → Syria'}
+
+
+
+
+
+
+
 ]
+
+
+
+
+
+
+
 const familyList = ['seamless','galvanized','alloy','black','profiles','angles','bars']
+
+
+
+
+
+
+
 const translations = {
- en:{eye:'A DOCUMENTED PERSPECTIVE / 2023—2026',heroA:'EXPERIENCE,',heroB:'BUILT IN DETAIL.',desc:'A closer look at the materials, product grades and international trade documentation behind our steel-market knowledge.',explore:'Explore the records',period:'DOCUMENT PERIOD',periodSub:'2023 — 2026',products:'PRODUCT FAMILIES',records:'INVOICE RECORDS',china:'CHINA-ASSOCIATED',turkiye:'TÜRKİYE → SYRIA',metric:'TONNES LISTED ON INVOICES',introTag:'01 / OUR EXPERIENCE',introTitle:'More than a list of transactions.',intro:'Steel trade requires precision: material grades, dimensions, supplier coordination, commercial paperwork and clear terms. These historical records demonstrate the kinds of products and trading documentation we work with.',introAside:'The strength of a commercial relationship is measured not only by tonnage, but by technical understanding and professional follow-through.',exploreTag:'02 / DOCUMENTED TRADE RECORDS',exploreTitle:'Trace the record. Explore the detail.',exploreDesc:'Switch trade groups and years, then open a record to review the steel types, sample specifications and source-document notes.',all:'All years',weight:'Listed weight',unknown:'Unverified',invoice:'Invoice reference',supplier:'Supplier named on document',date:'Document date',spec:'Recorded product information',dims:'Sample dimensions / specifications',notes:'Route & document notes',groupDisclaimer:'Groups are based on the supplied invoice analysis; they are not independently verified PRO STEEL deliveries or turnover.',recordNote:'For the China-associated group, Chinese company addresses or Turkish arrival ports do not establish the actual departure port in every case.',familyTag:'03 / STEEL PRODUCT EXPERIENCE',familyTitle:'Product expertise, measured in specifications.',familyDesc:'Explore seven product categories appearing in the documents. Listed specifications are examples from historical invoices, not a current inventory offer.',fam:['Seamless carbon pipes','Galvanized steel pipes','Alloy steel pipes','Black-coated pipes','Square & rectangular profiles','Equal steel angles','Round steel bars'],famDesc:['ST42 and ST44 seamless carbon tube grades appear in China-associated purchasing documents.','Galvanized and hot-dip galvanized pipes are recorded in several sizes and batches.','42CrMo4 alloy pipes and bars are mentioned in specific purchase invoices.','Black-coated seamless tubes appear in the June 2025 document group.','Square and rectangular steel sections appear prominently in Türkiye-to-Syria documents.','S235JR hot-rolled equal angles are recorded with 24×24×1.8 mm sections.','Carbon and alloy round bars appear across both document groups, including ST37, ST44, ST52, 42CrMo4, S235JR and SAE 1045.'],proofTag:'04 / OUR APPROACH',proofTitle:'Technical awareness. Commercial discipline.',proofSub:['Know the material','Respect the paperwork','Build relationships'],proofText:['We pay attention to product category, steel grade, dimension and agreed specifications.','We favour clear documents and defined commercial responsibilities for all parties.','Our objective is long-term cooperation connecting manufacturers and prospective buyers.'],ctaTag:'LOOKING FOR A COMMERCIAL PARTNER?',ctaTitle:'Let experience start a conversation.',ctaText:'Explore a flexible partnership with PRO STEEL: trade facilitation, representation by agreement or direct sourcing and resale.',ctaButton:'Discuss a partnership',foot:'SOURCE NOTE',disclaimer:'Source: the user-provided seven-page steel invoice classification report. 10 China-associated invoices total 2,088.112 t; 14 Türkiye-to-Syria documents include 13 known weights totalling 332.840 t. One weight is excluded. The groups may overlap: they must not be added as independent shipment volume. Invoice descriptions do not prove customs clearance, delivery or revenue. Two additional documents and a pro forma are excluded from both subtotals.',noRecords:'No entries for this selection',read:'View record',close:'Close record',tabChina:'China-associated records',tabTurkey:'Türkiye → Syria records',routeCaption:'TRADE-DOCUMENT VIEW',sourceCaption:'Source records span 2023 to 2026.'},
- ar:{eye:'خبرة موثقة / 2023—2026',heroA:'خبرة حقيقية،',heroB:'في أدق التفاصيل.',desc:'نظرة موسعة على أصناف الحديد والمواصفات والسجلات التجارية الدولية التي تعكس طبيعة خبرتنا في السوق.',explore:'استكشف السجلات',period:'الفترة الزمنية',periodSub:'2023 — 2026',products:'عائلات المنتجات',records:'مستندات الفواتير',china:'سجلات مرتبطة بالصين',turkiye:'تركيا ← سوريا',metric:'أطنان مسجلة بالفواتير',introTag:'01 / خبرتنا',introTitle:'أكثر من مجرد قائمة فواتير.',intro:'تجارة الحديد تتطلب دقة في نوع المنتج ودرجته وأبعاده، وتنسيقاً مع الموردين ووثائق وشروطاً واضحة. توضح هذه السجلات التاريخية أصناف المنتجات والمستندات التي نعرف كيفية التعامل معها.',introAside:'قيمة العلاقات التجارية لا تُقاس بالأطنان فقط، بل أيضاً بفهم المنتج والانضباط المهني.',exploreTag:'02 / السجلات التجارية',exploreTitle:'من الفاتورة إلى التفاصيل.',exploreDesc:'اختر المجموعة التجارية والسنة، ثم افتح أي سجل للاطلاع على الأصناف والمواصفات والملاحظات.',all:'كل السنوات',weight:'الوزن المسجل',unknown:'غير مؤكد',invoice:'مرجع الفاتورة',supplier:'المورّد المذكور بالمستند',date:'تاريخ المستند',spec:'معلومات المنتجات المسجلة',dims:'مقاسات ومواصفات نموذجية',notes:'المسار وملاحظات المستند',groupDisclaimer:'هذه المجموعات مأخوذة من تحليل الفواتير المرسل، وليست إثباتاً مستقلاً لشحنات PRO STEEL أو إيراداتها.',recordNote:'في المجموعة المرتبطة بالصين، عنوان البائع الصيني أو ميناء الوصول التركي لا يثبت دائماً ميناء الانطلاق الفعلي.',familyTag:'03 / خبرة المنتجات',familyTitle:'معرفة الحديد تبدأ من المواصفات.',familyDesc:'استكشف سبع فئات ظهرت في الفواتير. المواصفات أمثلة تاريخية وليست عرض مخزون متاح حالياً.',fam:['أنابيب كربونية بدون لحام','أنابيب فولاذية مجلفنة','أنابيب فولاذية سبائكية','أنابيب مطلية بالأسود','مقاطع مربعة ومستطيلة','زوايا فولاذية متساوية','قضبان فولاذية دائرية'],famDesc:['تظهر درجات ST42 وST44 في فواتير شراء مرتبطة بالصين.','أنابيب مجلفنة ومجلفنة بالغمس الساخن بعدة مقاسات وكميات.','تظهر درجة 42CrMo4 في فواتير لأنابيب وقضبان سبائكية.','أنابيب بدون لحام مطلية بالأسود في سجلات حزيران 2025.','المقاطع المربعة والمستطيلة بارزة في المستندات المرتبطة بتركيا وسوريا.','زوايا S235JR مدرفلة على الساخن بمقاس 24×24×1.8 مم.','قضبان كربونية وسبائكية بدرجات ST37 وST44 وST52 و42CrMo4 وS235JR وSAE 1045.'],proofTag:'04 / منهجنا',proofTitle:'فهم تقني. انضباط تجاري.',proofSub:['نفهم المنتج','نوثق الإجراءات','نبني العلاقات'],proofText:['نهتم بنوع المنتج ودرجة الفولاذ والمقاسات والمواصفات المتفق عليها.','نعتمد وضوح الوثائق وتحديد مسؤوليات الأطراف التجارية.','هدفنا شراكات طويلة الأمد تربط المصانع بالمشترين المحتملين.'],ctaTag:'هل تبحث عن شريك تجاري؟',ctaTitle:'خلّ الخبرة تكون بداية الحوار.',ctaText:'استكشف فرص التعاون المرنة مع PRO STEEL: الوساطة أو التمثيل باتفاق أو التوريد المباشر.',ctaButton:'ناقش فرصة شراكة',foot:'ملاحظة عن المصدر',disclaimer:'المصدر: تقرير تصنيف الفواتير المؤلف من سبع صفحات. 10 فواتير مرتبطة بالصين بإجمالي 2,088.112 طن، و14 مستنداً من تركيا إلى سوريا، منها 13 بوزن معروف بإجمالي 332.840 طن. استُبعد وزن غير مؤكد. قد تتداخل المجموعتان، فلا يجوز جمعهما كحجم شحن مستقل. الفواتير ليست إثبات تخليص أو تسليم أو إيرادات. هناك مستندات إضافية وعرض مبدئي مستبعدة من الإجماليين.',noRecords:'لا توجد سجلات لهذه السنة',read:'عرض السجل',close:'إغلاق السجل',tabChina:'سجلات مرتبطة بالصين',tabTurkey:'تركيا إلى سوريا',routeCaption:'السجلات التجارية',sourceCaption:'الفترة من 2023 إلى 2026.'},
- tr:{eye:'BELGELİ DENEYİM / 2023—2026',heroA:'DENEYİM,',heroB:'AYRINTILARDA SAKLI.',desc:'Çelik pazarına ilişkin ürün gruplarını, kalite sınıflarını ve uluslararası ticari belgeleri yakından inceleyin.',explore:'Kayıtları keşfedin',period:'BELGE DÖNEMİ',periodSub:'2023 — 2026',products:'ÜRÜN GRUPLARI',records:'FATURA KAYITLARI',china:'ÇİN BAĞLANTILI',turkiye:'TÜRKİYE → SURİYE',metric:'FATURALARDAKİ TON',introTag:'01 / DENEYİMİMİZ',introTitle:'Bir işlem listesinden daha fazlası.',intro:'Çelik ticaretinde kalite sınıfı, ölçü, tedarikçi koordinasyonu, belge ve açık ticari şartlar önem taşır. Geçmiş kayıtlar, deneyim kazandığımız ürün ve belge türlerini gösterir.',introAside:'Ticari ilişkinin gücü yalnızca tonajla değil, teknik bilgi ve profesyonel takip ile ölçülür.',exploreTag:'02 / BELGELİ TİCARİ KAYITLAR',exploreTitle:'Kaydı izleyin. Ayrıntıyı keşfedin.',exploreDesc:'Belge grubunu ve yılı seçin; ürünleri, örnek ölçüleri ve kaynak notlarını incelemek için kaydı açın.',all:'Tüm yıllar',weight:'Fatura ağırlığı',unknown:'Doğrulanmamış',invoice:'Fatura referansı',supplier:'Belgelerdeki satıcı',date:'Belge tarihi',spec:'Kaydedilen ürün bilgisi',dims:'Örnek ölçüler / teknik bilgiler',notes:'Güzergâh ve belge notları',groupDisclaimer:'Bu gruplar sunulan fatura analizine dayanır; PRO STEEL teslimat veya ciro bilgilerini bağımsız biçimde kanıtlamaz.',recordNote:'Çin bağlantılı grupta satıcı adresi veya Türkiye varış limanı her zaman gerçek yükleme limanını kanıtlamaz.',familyTag:'03 / ÜRÜN DENEYİMİ',familyTitle:'Ürün bilgisi teknik detaylarla başlar.',familyDesc:'Belgelerde görülen yedi çelik ürün grubunu inceleyin. Ölçüler geçmiş fatura örnekleridir; güncel stok teklifi değildir.',fam:['Dikişsiz karbon çelik borular','Galvanizli çelik borular','Alaşımlı çelik borular','Siyah kaplamalı borular','Kare ve dikdörtgen profiller','Eşit köşebentler','Yuvarlak çelik çubuklar'],famDesc:['ST42 ve ST44 kaliteleri Çin bağlantılı satın alma belgelerinde görünür.','Çeşitli boyutlarda galvanizli ve sıcak daldırma galvanizli borular.','42CrMo4 alaşım boru ve çubuklar belirli faturalarda yer alır.','Haziran 2025 kaydında siyah kaplamalı dikişsiz borular.','Türkiye–Suriye kayıtlarında kare ve dikdörtgen profiller öne çıkar.','24×24×1.8 mm S235JR sıcak haddelenmiş eşit köşebentler.','ST37, ST44, ST52, 42CrMo4, S235JR ve SAE 1045 kalitelerinde çubuklar.'],proofTag:'04 / YAKLAŞIMIMIZ',proofTitle:'Teknik farkındalık. Ticari disiplin.',proofSub:['Malzemeyi tanırız','Belgeleri önemseriz','İlişkileri geliştiririz'],proofText:['Ürün türüne, çelik kalitesine, ölçülere ve kararlaştırılan şartlara dikkat ederiz.','Açık belgeleri ve tanımlanmış ticari sorumlulukları esas alırız.','Üreticiler ile potansiyel alıcılar arasında uzun vadeli iş birliği hedefleriz.'],ctaTag:'TİCARİ ORTAK MI ARIYORSUNUZ?',ctaTitle:'Deneyim bir görüşmeyle başlasın.',ctaText:'PRO STEEL ile esnek iş birliğini değerlendirin: ticari aracılık, sözleşmeyle temsil veya doğrudan alım-satım.',ctaButton:'Ortaklığı görüşelim',foot:'KAYNAK NOTU',disclaimer:'Kaynak: kullanıcı tarafından sağlanan yedi sayfalık fatura sınıflandırma raporu. Çin bağlantılı 10 fatura 2.088,112 ton; Türkiye–Suriye grubunda 14 belge ve ağırlığı bilinen 13 belgede 332,840 ton bulunmaktadır. Bir belgenin ağırlığı hariç tutulmuştur. Gruplar örtüşebilir ve bağımsız sevkiyat hacmi gibi toplanmamalıdır. Fatura bilgileri gümrükleme, teslimat veya ciro kanıtı değildir. Ek belgeler ve proforma bu toplamların dışındadır.',noRecords:'Bu seçimde kayıt yok',read:'Kaydı incele',close:'Kaydı kapat',tabChina:'Çin bağlantılı kayıtlar',tabTurkey:'Türkiye → Suriye',routeCaption:'TİCARİ BELGE GÖRÜNÜMÜ',sourceCaption:'Belgeler 2023–2026 dönemini kapsar.'}
+
+
+
+
+
+
+
+ en:{eye:'20 YEARS IN STEEL TRADE / SINCE 2006',heroA:'20 YEARS OF EXPERIENCE,',heroB:'BUILT IN DETAIL.',desc:'Two decades of industry experience, product knowledge, supply coordination and international trade relationships — alongside a transparent view of the records available for 2006–2026.',explore:'Explore the records',period:'DOCUMENT PERIOD',periodSub:'2023 — 2026',products:'PRODUCT FAMILIES',records:'INVOICE RECORDS',china:'CHINA-ASSOCIATED',turkiye:'TÜRKİYE → SYRIA',metric:'20-YEAR VOLUME ESTIMATE · UNVERIFIED',introTag:' OUR EXPERIENCE',introTitle:'More than a list of transactions.',intro:'Steel trade requires precision: material grades, dimensions, supplier coordination, commercial paperwork and clear terms. These historical records demonstrate the kinds of products and trading documentation we work with.',introAside:'The strength of a commercial relationship is measured not only by tonnage, but by technical understanding and professional follow-through.',exploreTag:'  DOCUMENTED TRADE RECORDS',exploreTitle:'Trace the record. Explore the detail.',exploreDesc:'Switch trade groups and years, then open a record to review the steel types, sample specifications and source-document notes.',all:'All years',weight:'Listed weight',unknown:'Unverified',invoice:'Invoice reference',supplier:'Supplier named on document',date:'Document date',spec:'Recorded product information',dims:'Sample dimensions / specifications',notes:'Route & document notes',groupDisclaimer:'Groups are based on the supplied invoice analysis; they are not independently verified PRO STEEL deliveries or turnover.',recordNote:'For the China-associated group, Chinese company addresses or Turkish arrival ports do not establish the actual departure port in every case.',familyTag:' STEEL PRODUCT EXPERIENCE',familyTitle:'Product expertise, measured in specifications.',familyDesc:'Explore seven product categories appearing in the documents. Listed specifications are examples from historical invoices, not a current inventory offer.',fam:['Seamless carbon pipes','Galvanized steel pipes','Alloy steel pipes','Black-coated pipes','Square & rectangular profiles','Equal steel angles','Round steel bars'],famDesc:['ST42 and ST44 seamless carbon tube grades appear in China-associated purchasing documents.','Galvanized and hot-dip galvanized pipes are recorded in several sizes and batches.','42CrMo4 alloy pipes and bars are mentioned in specific purchase invoices.','Black-coated seamless tubes appear in the June 2025 document group.','Square and rectangular steel sections appear prominently in Türkiye-to-Syria documents.','S235JR hot-rolled equal angles are recorded with 24×24×1.8 mm sections.','Carbon and alloy round bars appear across both document groups, including ST37, ST44, ST52, 42CrMo4, S235JR and SAE 1045.'],proofTag:' OUR APPROACH',proofTitle:'Technical awareness. Commercial discipline.',proofSub:['Know the material','Respect the paperwork','Build relationships'],proofText:['We pay attention to product category, steel grade, dimension and agreed specifications.','We favour clear documents and defined commercial responsibilities for all parties.','Our objective is long-term cooperation connecting manufacturers and prospective buyers.'],ctaTag:'LOOKING FOR A COMMERCIAL PARTNER?',ctaTitle:'Let experience start a conversation.',ctaText:'Explore a flexible partnership with PRO STEEL: trade facilitation, representation by agreement or direct sourcing and resale.',ctaButton:'Discuss a partnership',foot:'SOURCE NOTE',disclaimer:'Source: the user-provided seven-page steel invoice classification report. 10 China-associated invoices total 2,088.112 t; the separate 20-year estimate of 41,760.86 t is unverified; 14 Türkiye-to-Syria documents include 13 known weights totalling 332.840 t. One weight is excluded. The groups may overlap: they must not be added as independent shipment volume. Invoice descriptions do not prove customs clearance, delivery or revenue. Two additional documents and a pro forma are excluded from both subtotals.',yearsLabel:'YEARS OF EXPERIENCE',operationsTag:'05 / COMMERCIAL OPERATIONS',operationsTitle:'From technical inquiry to documented delivery coordination.',operationsDesc:'An overview of the processes PRO STEEL can coordinate according to the agreed commercial scope; not a claim that every service was performed in each historical transaction.',operationSteps:['Technical requirement review','Manufacturer and sourcing assessment','Commercial terms and quotation','Quality documents and inspection planning','Logistics and shipping coordination','Documentation and post-shipment follow-up'],operationDetails:['Clarify grade, standard, dimensions, tolerance and intended application.','Review prospective manufacturers, production routes and origin documentation.','Align specifications, Incoterms, lead time, payment terms and responsibilities.','Request relevant mill test certificates and define inspection requirements.','Coordinate packing, freight and export documentation when included in the contract.','Track outstanding documents, communication and agreed follow-up.'],adviceTag:'06 / PROFESSIONAL RECOMMENDATIONS',adviceTitle:'Practical checks before a steel purchase.',adviceDesc:'Commercial recommendations based on common procurement controls — not claims of completed deals.',adviceItems:['Verify the actual producing mill and country of origin for the specific shipment.','Match the steel grade and product standard to the intended engineering use.','Confirm dimensions, tolerances, surface finish and unit weights in writing.','Agree inspection scope, mill test certificates and acceptance criteria before payment.','Check trade terms, insurance, lead times and shipment documents with the contracting parties.'],noRecords:'No entries for this selection',read:'View record',close:'Close record',tabChina:'China-associated records',tabTurkey:'Türkiye → Syria records',routeCaption:'TRADE-DOCUMENT VIEW',sourceCaption:'Company experience: 2006–2026 · Available document samples: 2006–2026. · The 41,760.86 t estimate is not derived from these invoices.'},
+
+
+
+
+
+
+
+ ar:{eye:'20 عاماً في تجارة الحديد / منذ 2006',heroA:'عشرون عاماً من الخبرة،',heroB:'في أدق التفاصيل.',desc:'عشرون عاماً من الخبرة في تجارة الحديد والتنسيق والتوريد وفهم الأسواق، مع عرض منفصل للسجلات المتاحة من 2023 إلى 2026.',explore:'استكشف السجلات',period:'الفترة الزمنية',periodSub:'2023 — 2026',products:'عائلات المنتجات',records:'مستندات الفواتير',china:'سجلات مرتبطة بالصين',turkiye:'تركيا ← سوريا',metric:'حجم تقديري خلال 20 سنة · غير موثق',introTag:' خبرتنا',introTitle:'أكثر من مجرد قائمة فواتير.',intro:'تجارة الحديد تتطلب دقة في نوع المنتج ودرجته وأبعاده، وتنسيقاً مع الموردين ووثائق وشروطاً واضحة. توضح هذه السجلات التاريخية أصناف المنتجات والمستندات التي نعرف كيفية التعامل معها.',introAside:'قيمة العلاقات التجارية لا تُقاس بالأطنان فقط، بل أيضاً بفهم المنتج والانضباط المهني.',exploreTag:' السجلات التجارية',exploreTitle:'من الفاتورة إلى التفاصيل.',exploreDesc:'اختر المجموعة التجارية والسنة، ثم افتح أي سجل للاطلاع على الأصناف والمواصفات والملاحظات.',all:'كل السنوات',weight:'الوزن المسجل',unknown:'غير مؤكد',invoice:'مرجع الفاتورة',supplier:'المورّد المذكور بالمستند',date:'تاريخ المستند',spec:'معلومات المنتجات المسجلة',dims:'مقاسات ومواصفات نموذجية',notes:'المسار وملاحظات المستند',groupDisclaimer:'هذه المجموعات مأخوذة من تحليل الفواتير المرسل، وليست إثباتاً مستقلاً لشحنات PRO STEEL أو إيراداتها.',recordNote:'في المجموعة المرتبطة بالصين، عنوان البائع الصيني أو ميناء الوصول التركي لا يثبت دائماً ميناء الانطلاق الفعلي.',familyTag:' خبرة المنتجات',familyTitle:'معرفة الحديد تبدأ من المواصفات.',familyDesc:'استكشف سبع فئات ظهرت في الفواتير. المواصفات أمثلة تاريخية وليست عرض مخزون متاح حالياً.',fam:['أنابيب كربونية بدون لحام','أنابيب فولاذية مجلفنة','أنابيب فولاذية سبائكية','أنابيب مطلية بالأسود','مقاطع مربعة ومستطيلة','زوايا فولاذية متساوية','قضبان فولاذية دائرية'],famDesc:['تظهر درجات ST42 وST44 في فواتير شراء مرتبطة بالصين.','أنابيب مجلفنة ومجلفنة بالغمس الساخن بعدة مقاسات وكميات.','تظهر درجة 42CrMo4 في فواتير لأنابيب وقضبان سبائكية.','أنابيب بدون لحام مطلية بالأسود في سجلات حزيران 2025.','المقاطع المربعة والمستطيلة بارزة في المستندات المرتبطة بتركيا وسوريا.','زوايا S235JR مدرفلة على الساخن بمقاس 24×24×1.8 مم.','قضبان كربونية وسبائكية بدرجات ST37 وST44 وST52 و42CrMo4 وS235JR وSAE 1045.'],proofTag:' منهجنا',proofTitle:'فهم تقني. انضباط تجاري.',proofSub:['نفهم المنتج','نوثق الإجراءات','نبني العلاقات'],proofText:['نهتم بنوع المنتج ودرجة الفولاذ والمقاسات والمواصفات المتفق عليها.','نعتمد وضوح الوثائق وتحديد مسؤوليات الأطراف التجارية.','هدفنا شراكات طويلة الأمد تربط المصانع بالمشترين المحتملين.'],ctaTag:'هل تبحث عن شريك تجاري؟',ctaTitle:'خلّ الخبرة تكون بداية الحوار.',ctaText:'استكشف فرص التعاون المرنة مع PRO STEEL: الوساطة أو التمثيل باتفاق أو التوريد المباشر.',ctaButton:'ناقش فرصة شراكة',foot:'ملاحظة عن المصدر',disclaimer:'المصدر: تقرير تصنيف الفواتير المؤلف من سبع صفحات. 10 فواتير مرتبطة بالصين بإجمالي 2,088.112 طن، أما 41,760.86 طن فهو تقدير منفصل لفترة 20 سنة غير موثق، و14 مستنداً من تركيا إلى سوريا، منها 13 بوزن معروف بإجمالي 332.840 طن. استُبعد وزن غير مؤكد. قد تتداخل المجموعتان، فلا يجوز جمعهما كحجم شحن مستقل. الفواتير ليست إثبات تخليص أو تسليم أو إيرادات. هناك مستندات إضافية وعرض مبدئي مستبعدة من الإجماليين.',yearsLabel:'سنوات الخبرة',operationsTag:'05 / العمليات التجارية',operationsTitle:'من المواصفات الفنية إلى تنسيق التوريد الموثّق.',operationsDesc:'مراحل يمكن لـ PRO STEEL تنسيقها بحسب نطاق الاتفاق؛ وهي ليست ادعاءً بتنفيذ كل مرحلة في جميع السجلات التاريخية.',operationSteps:['مراجعة المتطلبات الفنية','تقييم المصانع ومصادر التوريد','عرض السعر والشروط التجارية','شهادات الجودة والفحص','تنسيق الشحن والخدمات اللوجستية','المتابعة والوثائق'],operationDetails:['تحديد درجة الحديد والمعيار والأبعاد والتسامحات والاستخدام.','مراجعة المصنع المحتمل وطريقة الإنتاج ووثائق المنشأ.','توضيح شروط التسليم والدفع والمدة ومسؤوليات الأطراف.','طلب شهادات اختبار المواد والاتفاق على الفحوص.','تنسيق التعبئة والنقل ووثائق التصدير عند شمولها بالاتفاق.','متابعة المستندات والتواصل والتزامات ما بعد الشحن.'],adviceTag:'06 / توصيات مهنية',adviceTitle:'نقاط مهمة قبل شراء الحديد.',adviceDesc:'توصيات تجارية وفنية عامة، وليست سجلاً لصفقات تم تنفيذها.',adviceItems:['تحقق من المصنع المنتج فعلياً وبلد منشأ الشحنة.','طابق درجة الفولاذ والمواصفة مع الاستخدام الهندسي المطلوب.','أكد الأبعاد والتسامحات وتشطيب السطح والوزن خطياً.','اتفق على شهادات الجودة ونطاق الفحص ومعايير القبول قبل الدفع.','راجع شروط التجارة والتأمين وموعد التسليم ومستندات الشحن.'],noRecords:'لا توجد سجلات لهذه السنة',read:'عرض السجل',close:'إغلاق السجل',tabChina:'سجلات مرتبطة بالصين',tabTurkey:'تركيا إلى سوريا',routeCaption:'السجلات التجارية',sourceCaption:'خبرة الشركة: 2006–2026 · المستندات المتاحة: 2023–2026 · الرقم التقديري 41,760.86 طن غير مستخرج من هذه الفواتير.'},
+
+
+
+
+
+
+
+ tr:{eye:'ÇELİK TİCARETİNDE 20 YIL / 2006’DAN BERİ',heroA:'20 YILLIK DENEYİM,',heroB:'AYRINTILARDA SAKLI.',desc:'Çelik ticaretinde yirmi yıllık deneyim, ürün bilgisi ve tedarik koordinasyonu. 2023–2026 dönemine ait mevcut belgeler ayrı olarak sunulur.',explore:'Kayıtları keşfedin',period:'BELGE DÖNEMİ',periodSub:'2023 — 2026',products:'ÜRÜN GRUPLARI',records:'FATURA KAYITLARI',china:'ÇİN BAĞLANTILI',turkiye:'TÜRKİYE → SURİYE',metric:'20 YILLIK TAHMİNİ HACİM · DOĞRULANMAMIŞ',introTag:' DENEYİMİMİZ',introTitle:'Bir işlem listesinden daha fazlası.',intro:'Çelik ticaretinde kalite sınıfı, ölçü, tedarikçi koordinasyonu, belge ve açık ticari şartlar önem taşır. Geçmiş kayıtlar, deneyim kazandığımız ürün ve belge türlerini gösterir.',introAside:'Ticari ilişkinin gücü yalnızca tonajla değil, teknik bilgi ve profesyonel takip ile ölçülür.',exploreTag:' BELGELİ TİCARİ KAYITLAR',exploreTitle:'Kaydı izleyin. Ayrıntıyı keşfedin.',exploreDesc:'Belge grubunu ve yılı seçin; ürünleri, örnek ölçüleri ve kaynak notlarını incelemek için kaydı açın.',all:'Tüm yıllar',weight:'Fatura ağırlığı',unknown:'Doğrulanmamış',invoice:'Fatura referansı',supplier:'Belgelerdeki satıcı',date:'Belge tarihi',spec:'Kaydedilen ürün bilgisi',dims:'Örnek ölçüler / teknik bilgiler',notes:'Güzergâh ve belge notları',groupDisclaimer:'Bu gruplar sunulan fatura analizine dayanır; PRO STEEL teslimat veya ciro bilgilerini bağımsız biçimde kanıtlamaz.',recordNote:'Çin bağlantılı grupta satıcı adresi veya Türkiye varış limanı her zaman gerçek yükleme limanını kanıtlamaz.',familyTag:' ÜRÜN DENEYİMİ',familyTitle:'Ürün bilgisi teknik detaylarla başlar.',familyDesc:'Belgelerde görülen yedi çelik ürün grubunu inceleyin. Ölçüler geçmiş fatura örnekleridir; güncel stok teklifi değildir.',fam:['Dikişsiz karbon çelik borular','Galvanizli çelik borular','Alaşımlı çelik borular','Siyah kaplamalı borular','Kare ve dikdörtgen profiller','Eşit köşebentler','Yuvarlak çelik çubuklar'],famDesc:['ST42 ve ST44 kaliteleri Çin bağlantılı satın alma belgelerinde görünür.','Çeşitli boyutlarda galvanizli ve sıcak daldırma galvanizli borular.','42CrMo4 alaşım boru ve çubuklar belirli faturalarda yer alır.','Haziran 2025 kaydında siyah kaplamalı dikişsiz borular.','Türkiye–Suriye kayıtlarında kare ve dikdörtgen profiller öne çıkar.','24×24×1.8 mm S235JR sıcak haddelenmiş eşit köşebentler.','ST37, ST44, ST52, 42CrMo4, S235JR ve SAE 1045 kalitelerinde çubuklar.'],proofTag:' YAKLAŞIMIMIZ',proofTitle:'Teknik farkındalık. Ticari disiplin.',proofSub:['Malzemeyi tanırız','Belgeleri önemseriz','İlişkileri geliştiririz'],proofText:['Ürün türüne, çelik kalitesine, ölçülere ve kararlaştırılan şartlara dikkat ederiz.','Açık belgeleri ve tanımlanmış ticari sorumlulukları esas alırız.','Üreticiler ile potansiyel alıcılar arasında uzun vadeli iş birliği hedefleriz.'],ctaTag:'TİCARİ ORTAK MI ARIYORSUNUZ?',ctaTitle:'Deneyim bir görüşmeyle başlasın.',ctaText:'PRO STEEL ile esnek iş birliğini değerlendirin: ticari aracılık, sözleşmeyle temsil veya doğrudan alım-satım.',ctaButton:'Ortaklığı görüşelim',foot:'KAYNAK NOTU',disclaimer:'Kaynak: kullanıcı tarafından sağlanan yedi sayfalık fatura sınıflandırma raporu. Çin bağlantılı 10 fatura 2.088,112 ton; 20 yıllık 41.760,86 ton tahmini ayrı ve doğrulanmamıştır; Türkiye–Suriye grubunda 14 belge ve ağırlığı bilinen 13 belgede 332,840 ton bulunmaktadır. Bir belgenin ağırlığı hariç tutulmuştur. Gruplar örtüşebilir ve bağımsız sevkiyat hacmi gibi toplanmamalıdır. Fatura bilgileri gümrükleme, teslimat veya ciro kanıtı değildir. Ek belgeler ve proforma bu toplamların dışındadır.',yearsLabel:'DENEYİM YILI',operationsTag:'05 / TİCARİ OPERASYONLAR',operationsTitle:'Teknik talepten belgeli tedarik koordinasyonuna.',operationsDesc:'Sözleşme kapsamına göre koordine edilebilen süreçlerdir; her geçmiş işlemde tüm adımların uygulandığı iddia edilmez.',operationSteps:['Teknik gereksinim incelemesi','Üretici ve kaynak değerlendirmesi','Teklif ve ticari şartlar','Kalite belgeleri ve denetim','Lojistik ve sevkiyat koordinasyonu','Belge ve teslimat takibi'],operationDetails:['Kalite, standart, ölçü, tolerans ve kullanım amacının netleştirilmesi.','Üretici, üretim yöntemi ve menşe belgelerinin değerlendirilmesi.','Teslim şekli, ödeme, süre ve sorumlulukların belirlenmesi.','Malzeme test sertifikaları ve denetim kapsamının tanımlanması.','Sözleşme kapsamındaysa paketleme, taşıma ve ihracat evraklarının koordinasyonu.','Belge, iletişim ve kararlaştırılan takip işlemlerinin yürütülmesi.'],adviceTag:'06 / PROFESYONEL ÖNERİLER',adviceTitle:'Çelik satın almadan önce kontrol edilecekler.',adviceDesc:'Genel satın alma tavsiyeleridir; gerçekleşmiş işlem iddiası değildir.',adviceItems:['Gerçek üreticiyi ve sevkiyata ait menşe ülkesini teyit edin.','Çelik kalitesi ve standardını kullanım amacına göre doğrulayın.','Ölçüleri, toleransları, yüzeyi ve birim ağırlığı yazılı teyit edin.','Ödemeden önce test sertifikası, denetim ve kabul şartlarını belirleyin.','Teslim şekli, sigorta, teslim süresi ve sevkiyat belgelerini kontrol edin.'],noRecords:'Bu seçimde kayıt yok',read:'Kaydı incele',close:'Kaydı kapat',tabChina:'Çin bağlantılı kayıtlar',tabTurkey:'Türkiye → Suriye',routeCaption:'TİCARİ BELGE GÖRÜNÜMÜ',sourceCaption:'Şirket deneyimi: 2006–2026 · Mevcut kayıtlar: 2023–2026 · 41.760,86 ton tahmini bu faturalardan hesaplanmamıştır.'}
+
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
 const t = computed(() => translations[lang.value] || translations.en)
+
+
+
+
+
+
+
 const filtered = computed(() => invoices.filter(x => x.g === region.value && (year.value === 'all' || x.date.startsWith(year.value))))
+
+
+
+
+
+
+
 const fmtWeight = value => value == null ? t.value.unknown : new Intl.NumberFormat(lang.value === 'ar' ? 'en-US' : lang.value === 'tr' ? 'tr-TR' : 'en-US',{minimumFractionDigits:3,maximumFractionDigits:3}).format(value)
+
+
+
+
+
+
+
 const total = computed(() => invoices.filter(x => x.g === region.value).reduce((a,x)=>a+(x.weight||0),0))
+
+
+
+
+
+
+
 const chosenFamily = computed(() => familyList[selectedFamily.value])
+
+
+
+
+
+
+
 const productExample = computed(() => invoices.filter(x => x.f.includes(chosenFamily.value)).slice(0,3))
+
+
+
+
+
+
+
 function selectRegion(v){region.value=v;year.value='all';expanded.value=null}
+
+
+
+
+
+
+
 let observer
+
+
+
+
+
+
+
 function observe(){ observer?.disconnect(); if(typeof IntersectionObserver==='undefined'){document.querySelectorAll('.ex-reveal').forEach(x=>x.classList.add('visible'));return} observer=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:.08});document.querySelectorAll('.ex-reveal').forEach(el=>observer.observe(el))}
+
+
+
+
+
+
+
 onMounted(()=>nextTick(observe))
+
+
+
+
+
+
+
 onBeforeUnmount(()=>observer?.disconnect())
+
+
+
+
+
+
+
 watch(lang,()=>nextTick(observe))
+
+
+
+
+
+
+
 </script>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <template>
+
+
+
+
+
+
+
 <div class="ex-page" :dir="rtl?'rtl':'ltr'">
-  <section class="ex-hero">
-    <div class="ex-hero-image" :style="{backgroundImage:`url(${photo(5)})`}" aria-hidden="true"></div>
-    <div class="ex-hero-grid" aria-hidden="true"></div>
-    <div class="v2-wrap ex-hero-layout">
-      <div class="ex-hero-copy">
-        <div class="ex-eyebrow"><span class="ex-dot"></span>{{ t.eye }}</div>
-        <h1><span>{{ t.heroA }}</span><em>{{ t.heroB }}</em></h1>
-        <p>{{ t.desc }}</p>
-        <a href="#experience-records" class="ex-button">{{ t.explore }} <ArrowDown :size="17" /></a>
-        <div class="ex-hero-small">{{t.sourceCaption}}</div>
-      </div>
-      <div class="ex-hero-side"><span>PRO / STEEL</span><strong>2023<span>—</span>2026</strong><small>{{ t.period }}</small></div>
-    </div>
-    <div class="ex-hero-edge" aria-hidden="true">EXPERIENCE / PRO STEEL</div>
-  </section>
 
-  <div class="ex-metrics"><div class="v2-wrap ex-metrics-inner">
-    <div><span>01 / {{t.period}}</span><strong>2023 — 2026</strong></div>
-    <div><span>02 / {{t.records}}</span><strong>24</strong></div>
-    <div><span>03 / {{t.products}}</span><strong>07</strong></div>
-    <div><span>04 / {{t.metric}}</span><strong>2,088.112 <small>CN</small></strong><strong>332.840 <small>TR</small></strong></div>
-  </div></div>
 
-  <section class="ex-intro ex-space v2-wrap ex-reveal">
-    <div class="ex-section-id"><span>01</span><p>{{t.introTag}}</p></div>
-    <div class="ex-intro-main"><h2>{{t.introTitle}}</h2><p>{{t.intro}}</p></div>
-    <aside><span>“</span>{{t.introAside}}</aside>
-  </section>
 
-  <section id="experience-records" class="ex-register ex-space">
-    <div class="v2-wrap">
-      <div class="ex-heading ex-reveal"><div><p class="ex-kicker">{{t.exploreTag}}</p><h2>{{t.exploreTitle}}</h2></div><p>{{t.exploreDesc}}</p></div>
-      <div class="ex-record-layout">
-        <div class="ex-record-sidebar">
-          <button :class="{active:region==='china'}" @click="selectRegion('china')"><span>01 / {{t.tabChina}}</span><strong>2,088.112 <small>t</small></strong><span class="ex-side-bottom">10 {{t.records}} <ArrowUpRight :size="16" /></span></button>
-          <button :class="{active:region==='turkiye'}" @click="selectRegion('turkiye')"><span>02 / {{t.tabTurkey}}</span><strong>332.840 <small>t</small></strong><span class="ex-side-bottom">14 {{t.records}} <ArrowUpRight :size="16" /></span></button>
-          <div class="ex-side-note"><ShieldCheck :size="19"/><p>{{t.groupDisclaimer}}</p></div>
-        </div>
-        <div class="ex-record-content">
-          <div class="ex-ledger-top"><div><span>{{t.routeCaption}}</span><h3>{{region==='china'?t.tabChina:t.tabTurkey}}</h3></div><div class="ex-select-group"><label for="ex-year">{{t.date}}</label><select id="ex-year" v-model="year"><option value="all">{{t.all}}</option><option v-for="y in ['2023','2024','2025','2026']" :key="y" :value="y">{{y}}</option></select></div></div>
-          <div class="ex-ledger-list" :key="region+'-'+year">
-            <div v-if="!filtered.length" class="ex-none">{{t.noRecords}}</div>
-            <article v-for="(r,i) in filtered" :key="r.id" class="ex-ledger-item" :class="{open:expanded===r.id}">
-              <button class="ex-ledger-row" :aria-expanded="expanded===r.id" @click="expanded=expanded===r.id?null:r.id">
-                <span class="ex-ledger-index">{{String(i+1).padStart(2,'0')}}</span>
-                <span class="ex-ledger-main"><strong>{{r.seller}}</strong><small>{{r.dateLabel||r.date}} · {{r.ref||r.id}}</small></span>
-                <span class="ex-ledger-weight">{{fmtWeight(r.weight)}} <small v-if="r.weight!=null">t</small></span>
-                <ChevronDown :size="18" class="ex-chevron" />
-              </button>
-              <div v-if="expanded===r.id" class="ex-ledger-detail"><div><small>{{t.invoice}}</small><strong>{{r.ref||r.id}}</strong></div><div><small>{{t.spec}}</small><p>{{r.note}}</p></div><div><small>{{t.dims}}</small><p>{{r.sizes}}</p></div><div><small>{{t.notes}}</small><p>{{r.route}}</p></div></div>
-            </article>
-          </div>
-          <div class="ex-ledger-total"><span>{{t.weight}} / {{year==='all'?t.all:year}}</span><strong>{{fmtWeight(filtered.reduce((a,x)=>a+(x.weight||0),0))}} <small>t</small></strong></div>
-          <p class="ex-record-warning"><FileText :size="17" />{{t.recordNote}}</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <section class="ex-canvas"><div class="ex-canvas-photo" :style="{backgroundImage:`url(${photo(4)})`}"></div><div class="v2-wrap ex-canvas-inner ex-reveal"><span>PRO STEEL / INTERNATIONAL TRADE</span><h2>{{t.proofTitle}}</h2><div><Globe2 :size="31"/><span>{{t.sourceCaption}}</span></div></div></section>
 
-  <section class="ex-families ex-space v2-wrap">
-    <div class="ex-heading ex-reveal"><div><p class="ex-kicker">{{t.familyTag}}</p><h2>{{t.familyTitle}}</h2></div><p>{{t.familyDesc}}</p></div>
-    <div class="ex-family-layout">
-      <div class="ex-family-menu"><button v-for="(f,i) in familyList" :key="f" :class="{active:selectedFamily===i}" @click="selectedFamily=i"><span>{{String(i+1).padStart(2,'0')}}</span><strong>{{t.fam[i]}}</strong><ArrowUpRight :size="19" /></button></div>
-      <div class="ex-family-feature"><img :src="photo([2,6,3,6,2,1,3][selectedFamily])" :alt="t.fam[selectedFamily]"/><div class="ex-family-detail" :key="selectedFamily"><small>0{{selectedFamily+1}} / {{t.products}}</small><h3>{{t.fam[selectedFamily]}}</h3><p>{{t.famDesc[selectedFamily]}}</p><span>{{t.records}}: {{productExample.map(x=>x.ref||x.id).join(' · ')}}</span><RouterLink :to="prefix+'products'">{{t.products}} <ArrowUpRight :size="16"/></RouterLink></div></div>
-    </div>
-  </section>
 
-  <section class="ex-principles ex-space"><div class="v2-wrap"><div class="ex-heading ex-reveal"><div><p class="ex-kicker">{{t.proofTag}}</p><h2>{{t.proofTitle}}</h2></div></div><div class="ex-principle-grid"><article v-for="(s,i) in t.proofSub" :key="i" class="ex-reveal"><span>0{{i+1}}</span><component :is="[Layers3,FileText,Globe2][i]" :size="30"/><h3>{{s}}</h3><p>{{t.proofText[i]}}</p></article></div></div></section>
 
-  <section class="ex-bottom"><div class="ex-bottom-photo" :style="{backgroundImage:`url(${photo(2)})`}"></div><div class="v2-wrap ex-bottom-inner ex-reveal"><span class="ex-kicker">{{t.ctaTag}}</span><h2>{{t.ctaTitle}}</h2><p>{{t.ctaText}}</p><RouterLink :to="prefix+'partners'" class="ex-button">{{t.ctaButton}} <ArrowUpRight :size="18" /></RouterLink></div></section>
-  <div class="ex-disclaimer v2-wrap"><strong>{{t.foot}}</strong><p>{{t.disclaimer}}</p></div>
+  <section class="ex-hero">
+
+
+
+
+
+
+
+    <div class="ex-hero-image" :style="{ backgroundImage: 'url(' + photo(5) + ')' }" aria-hidden="true"></div>
+
+
+
+
+
+
+
+
+
+    <div class="ex-hero-grid" aria-hidden="true"></div>
+
+
+
+
+
+
+
+    <div class="v2-wrap ex-hero-layout">
+
+
+
+
+
+
+
+      <div class="ex-hero-copy">
+
+
+
+
+
+
+
+        <div class="ex-eyebrow"><span class="ex-dot"></span>{{ t.eye }}</div>
+
+
+
+
+
+
+
+        <h1><span>{{ t.heroA }}</span><em>{{ t.heroB }}</em></h1>
+
+
+
+
+
+
+
+        <p>{{ t.desc }}</p>
+
+
+
+
+
+
+
+        <a href="#experience-records" class="ex-button">{{ t.explore }} <ArrowDown :size="17" /></a>
+
+
+
+
+
+
+
+        <div class="ex-hero-small">{{t.sourceCaption}}</div>
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+      <div class="ex-hero-side"><span>PRO / STEEL</span><strong>20<span>+</span></strong><small>{{ t.yearsLabel }}</small></div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <div class="ex-hero-edge" aria-hidden="true">EXPERIENCE / PRO STEEL</div>
+
+
+
+
+
+
+
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="ex-metrics"><div class="v2-wrap ex-metrics-inner">
+
+
+
+
+
+
+
+    <div><span>{{t.yearsLabel}}</span><strong>20 <small>YEARS / 2006–2026</small></strong></div>
+
+
+
+
+
+
+
+    <div><span> {{t.records}}</span><strong>24</strong></div>
+
+
+
+
+
+
+
+    <div><span> {{t.products}}</span><strong>07</strong></div>
+
+
+
+
+
+
+
+    <div><span> {{t.metric}}</span><strong>41.760,86 <small>CN</small></strong><strong>332.840 <small>TR</small></strong></div>
+
+
+
+
+
+
+
+  </div></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="ex-intro ex-space v2-wrap ex-reveal">
+
+
+
+
+
+
+
+    <div class="ex-section-id"><span>01</span><p>{{t.introTag}}</p></div>
+
+
+
+
+
+
+
+    <div class="ex-intro-main"><h2>{{t.introTitle}}</h2><p>{{t.intro}}</p></div>
+
+
+
+
+
+
+
+    <aside><span>“</span>{{t.introAside}}</aside>
+
+
+
+
+
+
+
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section id="experience-records" class="ex-register ex-space">
+
+
+
+
+
+
+
+    <div class="v2-wrap">
+
+
+
+
+
+
+
+      <div class="ex-heading ex-reveal"><div><p class="ex-kicker">{{t.exploreTag}}</p><h2>{{t.exploreTitle}}</h2></div><p>{{t.exploreDesc}}</p></div>
+
+
+
+
+
+
+
+      <div class="ex-record-layout">
+
+
+
+
+
+
+
+        <div class="ex-record-sidebar">
+
+
+
+
+
+
+
+          <button :class="{active:region==='china'}" @click="selectRegion('china')"><span> {{t.tabChina}}</span><strong>41.760,86<small>t</small></strong><span class="ex-side-bottom">10 {{t.records}} <ArrowUpRight :size="16" /></span></button>
+
+
+
+
+
+
+
+          <button :class="{active:region==='turkiye'}" @click="selectRegion('turkiye')"><span> {{t.tabTurkey}}</span><strong>332.840 <small>t</small></strong><span class="ex-side-bottom">14 {{t.records}} <ArrowUpRight :size="16" /></span></button>
+
+
+
+
+
+
+
+          <div class="ex-side-note"><ShieldCheck :size="19"/><p>{{t.groupDisclaimer}}</p></div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="ex-record-content">
+
+
+
+
+
+
+
+          <div class="ex-ledger-top"><div><span>{{t.routeCaption}}</span><h3>{{region==='china'?t.tabChina:t.tabTurkey}}</h3></div><div class="ex-select-group"><label for="ex-year">{{t.date}}</label><select id="ex-year" v-model="year"><option value="all">{{t.all}}</option><option v-for="y in ['2023','2024','2025','2026']" :key="y" :value="y">{{y}}</option></select></div></div>
+
+
+
+
+
+
+
+          <div class="ex-ledger-list" :key="region+'-'+year">
+
+
+
+
+
+
+
+            <div v-if="!filtered.length" class="ex-none">{{t.noRecords}}</div>
+
+
+
+
+
+
+
+            <article v-for="(r,i) in filtered" :key="r.id" class="ex-ledger-item" :class="{open:expanded===r.id}">
+
+
+
+
+
+
+
+              <button class="ex-ledger-row" :aria-expanded="expanded===r.id" @click="expanded=expanded===r.id?null:r.id">
+
+
+
+
+
+
+
+                <span class="ex-ledger-index">{{String(i+1).padStart(2,'0')}}</span>
+
+
+
+
+
+
+
+                <span class="ex-ledger-main"><strong>{{r.seller}}</strong><small>{{r.dateLabel||r.date}} · {{r.ref||r.id}}</small></span>
+
+
+
+
+
+
+
+                <span class="ex-ledger-weight">{{fmtWeight(r.weight)}} <small v-if="r.weight!=null">t</small></span>
+
+
+
+
+
+
+
+                <ChevronDown :size="18" class="ex-chevron" />
+
+
+
+
+
+
+
+              </button>
+
+
+
+
+
+
+
+              <div v-if="expanded===r.id" class="ex-ledger-detail"><div><small>{{t.invoice}}</small><strong>{{r.ref||r.id}}</strong></div><div><small>{{t.spec}}</small><p>{{r.note}}</p></div><div><small>{{t.dims}}</small><p>{{r.sizes}}</p></div><div><small>{{t.notes}}</small><p>{{r.route}}</p></div></div>
+
+
+
+
+
+
+
+            </article>
+
+
+
+
+
+
+
+          </div>
+
+
+
+
+
+
+
+          
+<div class="ex-ledger-total">
+  <span>
+    {{ region === 'china' && year === 'all'
+      ? t.metric
+      : t.weight + ' / ' + (year === 'all' ? t.all : year) }}
+  </span>
+
+  <strong>
+    {{ region === 'china' && year === 'all'
+      ? '41,760.86'
+      : fmtWeight(filtered.reduce((a,x) => a + (x.weight || 0), 0)) }}
+    <small>t</small>
+  </strong>
 </div>
+
+
+
+
+
+
+
+
+          <p class="ex-record-warning"><FileText :size="17" />{{t.recordNote}}</p>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="ex-canvas"><div class="ex-canvas-photo" :style="{ backgroundImage: 'url(' + photo(4) + ')' }"></div><div class="v2-wrap ex-canvas-inner ex-reveal"><span>PRO STEEL / INTERNATIONAL TRADE</span><h2>{{t.proofTitle}}</h2><div><Globe2 :size="31"/><span>{{t.sourceCaption}}</span></div></div></section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="ex-families ex-space v2-wrap">
+
+
+
+
+
+
+
+    <div class="ex-heading ex-reveal"><div><p class="ex-kicker">{{t.familyTag}}</p><h2>{{t.familyTitle}}</h2></div><p>{{t.familyDesc}}</p></div>
+
+
+
+
+
+
+
+    <div class="ex-family-layout">
+
+
+
+
+
+
+
+      <div class="ex-family-menu"><button v-for="(f,i) in familyList" :key="f" :class="{active:selectedFamily===i}" @click="selectedFamily=i"><span>{{String(i+1).padStart(2,'0')}}</span><strong>{{t.fam[i]}}</strong><ArrowUpRight :size="19" /></button></div>
+
+
+
+
+
+
+
+      <div class="ex-family-feature"><img :src="photo([2,6,3,6,2,1,3][selectedFamily])" :alt="t.fam[selectedFamily]"/><div class="ex-family-detail" :key="selectedFamily"><small>0{{selectedFamily+1}} / {{t.products}}</small><h3>{{t.fam[selectedFamily]}}</h3><p>{{t.famDesc[selectedFamily]}}</p><span>{{t.records}}: {{productExample.map(x=>x.ref||x.id).join(' · ')}}</span><RouterLink :to="prefix+'products'">{{t.products}} <ArrowUpRight :size="16"/></RouterLink></div></div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="ex-principles ex-space"><div class="v2-wrap"><div class="ex-heading ex-reveal"><div><p class="ex-kicker">{{t.proofTag}}</p><h2>{{t.proofTitle}}</h2></div></div><div class="ex-principle-grid"><article v-for="(s,i) in t.proofSub" :key="i" class="ex-reveal"><span>0{{i+1}}</span><component :is="[Layers3,FileText,Globe2][i]" :size="30"/><h3>{{s}}</h3><p>{{t.proofText[i]}}</p></article></div></div></section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="ex-principles ex-space ex-operations"><div class="v2-wrap">
+
+
+
+    <div class="ex-heading"><div><p class="ex-kicker">{{t.operationsTag}}</p><h2>{{t.operationsTitle}}</h2></div><p>{{t.operationsDesc}}</p></div>
+
+
+
+    <div class="ex-operation-grid"><article v-for="(step,i) in t.operationSteps" :key="i"><span>{{String(i+1).padStart(2,'0')}}</span><h3>{{step}}</h3><p>{{t.operationDetails[i]}}</p></article></div>
+
+
+
+  </div></section>
+
+
+
+
+
+
+
+  <section class="ex-space ex-advice v2-wrap">
+
+
+
+    <div class="ex-heading"><div><p class="ex-kicker">{{t.adviceTag}}</p><h2>{{t.adviceTitle}}</h2></div><p>{{t.adviceDesc}}</p></div>
+
+
+
+    <div class="ex-advice-list"><div v-for="(item,i) in t.adviceItems" :key="i"><CheckCircle2 :size="21"/><span>{{item}}</span></div></div>
+
+
+
+  </section>
+
+
+
+
+
+
+
+  <section class="ex-bottom"><div class="ex-bottom-photo" :style="{ backgroundImage: 'url(' + photo(2) + ')' }"></div><div class="v2-wrap ex-bottom-inner ex-reveal"><span class="ex-kicker">{{t.ctaTag}}</span><h2>{{t.ctaTitle}}</h2><p>{{t.ctaText}}</p><RouterLink :to="prefix+'partners'" class="ex-button">{{t.ctaButton}} <ArrowUpRight :size="18" /></RouterLink></div></section>
+
+
+
+
+
+
+
+  <div class="ex-disclaimer v2-wrap"><strong>{{t.foot}}</strong><p>{{t.disclaimer}}</p></div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
 </template>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style scoped>
+
+
+
+
+
+
+
 .ex-page{--ex-gold:#c7a067;--ex-bg:#0c1116;--ex-muted:#a5b0b9;background:var(--ex-bg);color:#f0f1f0;overflow:hidden}.ex-page button,.ex-page select{font:inherit}.ex-page button{cursor:pointer}.ex-page h1,.ex-page h2,.ex-page h3{font-family:Inter,Arial,sans-serif}.ex-page[dir=rtl] h1,.ex-page[dir=rtl] h2,.ex-page[dir=rtl] h3{font-family:Tahoma,Arial,sans-serif;letter-spacing:0}.ex-hero{min-height:790px;height:100svh;max-height:1080px;position:relative;display:flex;align-items:center;background:#0b1319}.ex-hero-image{position:absolute;inset:0;background-size:cover;background-position:center;filter:saturate(.7);opacity:.55;transform:scale(1.09);animation:ex-image 1.8s ease-out forwards}.ex-hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b1118 4%,rgba(10,17,23,.94) 34%,rgba(10,17,23,.42) 100%),linear-gradient(0deg,#0c1116,transparent 35%)}.ex-page[dir=rtl] .ex-hero:after{background:linear-gradient(270deg,#0b1118 4%,rgba(10,17,23,.94) 34%,rgba(10,17,23,.42) 100%),linear-gradient(0deg,#0c1116,transparent 35%)}.ex-hero-grid{position:absolute;inset:0;z-index:1;opacity:.15;background-image:linear-gradient(90deg,#d0af781c 1px,transparent 1px);background-size:calc(100% / 6) 100%}.ex-hero-layout{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8%;padding-top:80px}.ex-hero-copy{max-width:690px}.ex-eyebrow,.ex-kicker{font-size:10px;letter-spacing:.24em;font-weight:750;color:var(--ex-gold);text-transform:uppercase}.ex-eyebrow{display:flex;gap:15px;align-items:center;margin-bottom:30px}.ex-dot{height:7px;width:7px;background:var(--ex-gold);border-radius:50%;box-shadow:0 0 0 7px #c7a06720}.ex-hero h1{font-size:clamp(43px,5.2vw,78px);line-height:1.07;letter-spacing:-.05em;font-weight:750;margin:0}.ex-hero h1 span,.ex-hero h1 em{display:block;font-style:normal;animation:ex-rise .9s ease both}.ex-hero h1 em{color:var(--ex-gold);font-weight:450;animation-delay:.18s}.ex-hero-copy>p{max-width:540px;font-size:16px;line-height:1.85;color:#bdc7ce;margin:30px 0 28px}.ex-button{display:inline-flex;gap:35px;align-items:center;justify-content:space-between;padding:17px 22px;color:#131a20;background:var(--ex-gold);min-height:53px;font-size:12px;font-weight:800;transition:background .3s,transform .3s}.ex-button:hover{background:#e5bb7e;transform:translateY(-3px)}.ex-hero-small{font-size:11px;color:#a4aab0;margin-top:33px;letter-spacing:.1em}.ex-hero-side{padding:28px 10px 25px 35px;border-inline-start:1px solid #b99a694f;min-width:220px;display:grid;gap:23px}.ex-hero-side>span,.ex-hero-side small{color:#c8c9c6;letter-spacing:.19em;font-size:10px}.ex-hero-side strong{display:grid;line-height:1.1;font-weight:300;font-size:45px;letter-spacing:-.05em}.ex-hero-side strong span{color:var(--ex-gold);margin-block:7px}.ex-hero-edge{position:absolute;bottom:30px;inset-inline-end:4%;z-index:2;font-size:10px;letter-spacing:.25em;color:#adb8bd}.ex-metrics{background:#111b23;border-top:1px solid #ffffff19;border-bottom:1px solid #ffffff19}.ex-metrics-inner{display:grid;grid-template-columns:repeat(4,1fr)}.ex-metrics-inner>div{padding:29px 20px 30px;border-inline-end:1px solid #ffffff19;display:flex;flex-direction:column;justify-content:center;gap:10px}.ex-metrics-inner>div:first-child{padding-inline-start:0}.ex-metrics-inner>div:last-child{border:0}.ex-metrics span{font-size:10px;color:#adb5bd;letter-spacing:.1em}.ex-metrics strong{font-size:24px;font-weight:650;color:#e7e6e3;line-height:1.1}.ex-metrics strong small{font-size:10px;color:var(--ex-gold)}.ex-space{padding-top:125px;padding-bottom:125px}.ex-intro{display:grid;grid-template-columns:.45fr 1.5fr .85fr;gap:6%;align-items:start}.ex-section-id span{display:block;font-size:82px;line-height:1;color:transparent;-webkit-text-stroke:1px #c7a0676e}.ex-section-id p{font-size:11px;color:#c7a067;letter-spacing:.1em}.ex-intro-main h2,.ex-heading h2,.ex-principles h2{font-size:clamp(33px,3.7vw,57px);font-weight:650;letter-spacing:-.04em;line-height:1.13;margin:0 0 25px}.ex-intro-main p,.ex-heading>p{color:#aab6bd;line-height:1.9;font-size:15px}.ex-intro aside{border-top:1px solid #ae885681;padding-top:8px;font-size:19px;line-height:1.65;color:#e0e1df;font-family:Georgia,serif;font-style:italic}.ex-intro aside span{display:block;color:#c7a067;font-size:78px;line-height:.95}.ex-heading{display:flex;justify-content:space-between;align-items:end;gap:50px;margin-bottom:50px}.ex-heading>div{max-width:690px}.ex-heading>p{max-width:375px;margin:0 0 5px}.ex-kicker{display:block;margin:0 0 20px}.ex-register{background:#151f27;scroll-margin-top:75px}.ex-record-layout{display:grid;grid-template-columns:305px minmax(0,1fr);gap:22px}.ex-record-sidebar{display:flex;flex-direction:column;gap:12px}.ex-record-sidebar>button{background:#101920;border:1px solid #34434d;color:white;padding:23px;text-align:start;display:flex;flex-direction:column;gap:19px;transition:background .2s,border .2s}.ex-record-sidebar>button.active{background:#26313a;border-color:#c7a067}.ex-record-sidebar>button>span:first-child{font-size:12px;color:#b7c4cb}.ex-record-sidebar>button strong{color:#c7a067;font-size:35px;font-weight:500;letter-spacing:-.04em}.ex-record-sidebar>button strong small{font-size:15px}.ex-side-bottom{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#d8d9d5;letter-spacing:.08em}.ex-side-note{display:flex;align-items:start;gap:12px;padding:20px;border:1px solid #3d4a51;color:#acb6bb;font-size:12px;line-height:1.75}.ex-side-note svg{flex-shrink:0;color:#c7a067}.ex-side-note p{margin:0}.ex-record-content{min-width:0;background:#0d151b;border:1px solid #334049}.ex-ledger-top{padding:23px 25px;display:flex;justify-content:space-between;align-items:center;gap:20px;border-bottom:1px solid #35414a}.ex-ledger-top span,.ex-select-group label{font-size:10px;letter-spacing:.13em;color:#c7a067}.ex-ledger-top h3{margin:10px 0 0;font-size:18px;font-weight:650}.ex-select-group{display:flex;align-items:center;gap:13px}.ex-select-group select{background:#1b2730;border:1px solid #43525e;padding:10px;color:#ececeb;min-width:105px}.ex-ledger-list{max-height:720px;overflow-y:auto}.ex-ledger-item{border-bottom:1px solid #2d3941}.ex-ledger-row{width:100%;display:grid;grid-template-columns:40px 1fr auto 20px;gap:16px;align-items:center;padding:23px 24px;border:0;color:#edf0f0;background:transparent;text-align:start}.ex-ledger-row:hover,.ex-ledger-item.open .ex-ledger-row{background:#1e2a32}.ex-ledger-index{font-size:11px;color:#c7a067}.ex-ledger-main{min-width:0;display:flex;flex-direction:column;gap:7px}.ex-ledger-main strong{font-size:13px;font-weight:700;overflow-wrap:anywhere}.ex-ledger-main small{font-size:11px;color:#93a0a9}.ex-ledger-weight{font-size:15px;font-weight:650;white-space:nowrap}.ex-ledger-weight small{font-size:10px;color:#b9c5cb}.ex-chevron{transition:transform .25s;color:#c7a067}.open .ex-chevron{transform:rotate(180deg)}.ex-ledger-detail{padding:25px 25px 29px 80px;background:#121f27;display:grid;grid-template-columns:1fr 1fr;gap:23px;border-top:1px solid #293945;animation:ex-rise .25s both}.ex-page[dir=rtl] .ex-ledger-detail{padding:25px 80px 29px 25px}.ex-ledger-detail small{font-size:10px;color:#c7a067;display:block;margin-bottom:8px}.ex-ledger-detail strong,.ex-ledger-detail p{font-size:12px;line-height:1.8;color:#d1d9de;margin:0;overflow-wrap:anywhere}.ex-ledger-total{padding:23px 27px;border-top:1px solid #c7a067;display:flex;align-items:center;justify-content:space-between;gap:15px}.ex-ledger-total span{color:#bac1c7;font-size:11px}.ex-ledger-total strong{font-size:24px;font-weight:600;color:#c7a067}.ex-ledger-total small{font-size:12px}.ex-record-warning{display:flex;gap:12px;align-items:start;color:#a6b1b8;font-size:11px;line-height:1.8;margin:0;padding:0 22px 22px}.ex-record-warning svg{flex-shrink:0;color:#c7a067}.ex-none{padding:40px;color:#aab5bb}.ex-canvas{height:490px;position:relative;display:flex;align-items:center}.ex-canvas-photo{position:absolute;inset:0;background-size:cover;background-position:center;filter:grayscale(.1)}.ex-canvas:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#071016ed,#07101690 55%,#07101644);z-index:1}.ex-canvas-inner{position:relative;z-index:2}.ex-canvas-inner>span{font-size:11px;letter-spacing:.16em;color:#d9af75}.ex-canvas h2{max-width:700px;font-weight:600;font-size:clamp(37px,4.4vw,65px);line-height:1.12}.ex-canvas-inner>div{display:flex;gap:12px;align-items:center;color:#c8d0d4;font-size:12px}.ex-canvas svg{color:#c7a067}.ex-family-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:35px}.ex-family-menu{border-top:1px solid #33444e}.ex-family-menu button{width:100%;display:grid;grid-template-columns:34px 1fr 23px;gap:20px;align-items:center;text-align:start;color:#e3e8e9;border:0;border-bottom:1px solid #33444e;background:transparent;padding:23px 15px;transition:background .2s}.ex-family-menu button:hover,.ex-family-menu button.active{background:#1c2932}.ex-family-menu button.active{border-inline-start:2px solid #c7a067}.ex-family-menu button span{color:#c7a067;font-size:11px}.ex-family-menu button strong{font-size:15px;font-weight:600}.ex-family-menu button svg{color:#c7a067}.ex-family-feature{position:relative;min-height:590px;background:#1a2730;overflow:hidden}.ex-family-feature>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.65) saturate(.55)}.ex-family-feature:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#0a1219ee,transparent 85%)}.ex-family-detail{position:absolute;z-index:2;bottom:0;padding:35px;animation:ex-rise .45s both}.ex-family-detail small{color:#c7a067;font-size:11px}.ex-family-detail h3{font-size:29px;margin:10px 0 15px}.ex-family-detail p{max-width:480px;color:#d8dde0;line-height:1.8;font-size:14px}.ex-family-detail>span{display:block;font-size:10px;color:#aebcc6;line-height:1.8;margin-bottom:20px}.ex-family-detail a{display:inline-flex;gap:10px;align-items:center;color:#e3bf88;font-size:12px;font-weight:700}.ex-principles{background:#151f27}.ex-principle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.ex-principle-grid article{padding:39px 30px;background:#101920;border:1px solid #354650;min-height:295px}.ex-principle-grid article>span{color:#c7a067;font-size:11px}.ex-principle-grid svg{display:block;color:#c7a067;margin-top:30px}.ex-principle-grid h3{font-size:21px;margin:16px 0 9px;font-weight:650}.ex-principle-grid p{font-size:13px;line-height:1.85;color:#a5b4bc}.ex-bottom{position:relative;padding:120px 0;min-height:500px;display:flex;align-items:center}.ex-bottom-photo{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.6) saturate(.7)}.ex-bottom:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#080f16ee,#0d161fd8 60%,#0d161f88);z-index:1}.ex-bottom-inner{position:relative;z-index:2}.ex-bottom h2{font-size:clamp(38px,4.3vw,63px);line-height:1.13;max-width:690px;font-weight:650}.ex-bottom p{font-size:15px;max-width:600px;color:#bbc9d1;line-height:1.85;margin-bottom:28px}.ex-disclaimer{padding-top:36px;padding-bottom:42px}.ex-disclaimer strong{font-size:11px;letter-spacing:.14em;color:#c7a067}.ex-disclaimer p{font-size:11px;color:#8d9ba4;line-height:1.85;max-width:1050px}.ex-reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}.ex-reveal.visible{opacity:1;transform:none}@keyframes ex-rise{from{opacity:0;transform:translateY(23px)}to{opacity:1;transform:none}}@keyframes ex-image{to{transform:scale(1)}}@media(max-width:1000px){.ex-hero-side{display:none}.ex-intro{grid-template-columns:.3fr 1fr}.ex-intro aside{grid-column:2}.ex-record-layout{grid-template-columns:1fr}.ex-record-sidebar{display:grid;grid-template-columns:1fr 1fr}.ex-side-note{grid-column:span 2}.ex-family-layout{grid-template-columns:1fr}.ex-family-feature{min-height:440px}.ex-metrics-inner{grid-template-columns:repeat(2,1fr)}}@media(max-width:640px){.ex-hero{height:auto;min-height:720px}.ex-hero-layout{padding-top:140px;padding-bottom:110px}.ex-hero h1{font-size:clamp(37px,10vw,56px)}.ex-hero-copy>p{font-size:14px}.ex-space{padding-top:76px;padding-bottom:76px}.ex-intro{grid-template-columns:1fr;gap:25px}.ex-intro aside{grid-column:auto}.ex-section-id span{font-size:48px}.ex-heading{flex-direction:column;align-items:start;gap:15px}.ex-heading h2,.ex-intro h2{font-size:35px}.ex-metrics-inner>div{padding:22px 10px}.ex-metrics strong{font-size:19px}.ex-record-sidebar>button{padding:15px;gap:13px}.ex-record-sidebar>button strong{font-size:23px}.ex-record-content{width:100%}.ex-ledger-row{padding:17px 11px;gap:7px;grid-template-columns:22px minmax(0,1fr) auto 16px}.ex-ledger-main strong{font-size:11px}.ex-ledger-weight{font-size:12px}.ex-ledger-detail,.ex-page[dir=rtl] .ex-ledger-detail{grid-template-columns:1fr;padding:22px}.ex-ledger-top{padding:20px 14px;align-items:start;flex-direction:column}.ex-family-feature{min-height:445px}.ex-family-detail{padding:22px}.ex-family-detail h3{font-size:25px}.ex-principle-grid{grid-template-columns:1fr}.ex-canvas{height:400px}.ex-canvas h2{font-size:38px}}@media(prefers-reduced-motion:reduce){.ex-page *, .ex-page *:before, .ex-page *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.ex-reveal{opacity:1;transform:none}}
+
+
+
+
+
+
+
+
+
+
+
+.ex-operation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+
+
+
+.ex-operation-grid article{background:#101920;border:1px solid #364650;padding:29px;min-height:190px}
+
+
+
+.ex-operation-grid article>span{color:#c7a067;font-size:12px;letter-spacing:.12em}
+
+
+
+.ex-operation-grid h3{font-size:20px;font-weight:600;margin:19px 0 10px}
+
+
+
+.ex-operation-grid p{color:#aab8c0;font-size:13px;line-height:1.8}
+
+
+
+.ex-advice-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+
+
+
+.ex-advice-list>div{display:flex;align-items:flex-start;gap:13px;padding:19px 21px;border:1px solid #354650;background:#141f28;color:#d7dfe2;font-size:13px;line-height:1.8}
+
+
+
+.ex-advice-list svg{flex:none;color:#c7a067;margin-top:3px}
+
+
+
+@media(max-width:850px){.ex-operation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+
+@media(max-width:640px){.ex-operation-grid,.ex-advice-list{grid-template-columns:1fr}}
+
+
+
 </style>
